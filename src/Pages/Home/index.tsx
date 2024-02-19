@@ -145,20 +145,20 @@ function Home() {
     {/* Side bar */}
     <div className="w-[200px] min-h-screen bg-[#3B3363]">
       <div className="flex flex-col justify-center">
-        <img src="./assets/logo.png" alt="logo file" className="mx-auto mt-5" />
+        <img src="/assets/logo.png" alt="logo file" className="mx-auto mt-5" />
         <p className="text-[26px] text-white text-center font-bold">MrsDoge</p>
 
         <div
           className="flex flex-row justify-around items-center border-y-2 border-yellow-500 bg-[#2C254A] px-6 py-2 text-yellow-500 font-bold text-[22px] mt-6 cursor-pointer hover:brightness-125 duration-300"
           onClick={() => connectWalletManual()}
         >
-          <img className="w-[30px] h-[30px]" src="./assets/metamask.png" />
+          <img className="w-[30px] h-[30px]" src="/assets/metamask.png" />
           {address == '' ? <p>Connect</p> : <p className="text-[16px] text-left pl-4">{address.slice(0, 14) + '...'}</p>}
 
         </div>
         {/* Ticket List */}
         <div className="flex flex-row items-center justify-start gap-2 pl-5 mt-5">
-          <img src="./assets/ticketImg.svg"></img>
+          <img src="/assets/ticketImg.svg"></img>
           <div className="flex flex-col gap-0">
             <p className="text-white">Your Tickets</p>
             <p className="-mt-1 text-yellow-400">{ownTicket} Tickets</p>
@@ -167,7 +167,7 @@ function Home() {
 
         {/* Your BTC Spent */}
         {/* <div className="flex flex-row items-center justify-start gap-2 pl-5 mt-5">
-          <img src="./assets/spentImg.svg"></img>
+          <img src="/assets/spentImg.svg"></img>
           <div className="flex flex-col gap-0">
             <p className="text-white">Your BTC Spent</p>
             <p className="-mt-1 text-yellow-400">{0} Tickets</p>
@@ -176,7 +176,7 @@ function Home() {
 
         {/* Your BTC Spent */}
         <div className="flex flex-row items-center justify-start gap-2 pl-5 mt-5">
-          <img src="./assets/spentImg.svg"></img>
+          <img src="/assets/spentImg.svg"></img>
           <div className="flex flex-col gap-0">
             <p className="text-white">Your Token Balance</p>
             <p className="-mt-1 text-yellow-400">{tokenBalance} Tickets</p>
