@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 
+import MrsDogeImg from '../../assets/logo.png'
+import BtcMark from '../../assets/metamask.png'
+import TicketMark from '../../assets/ticketImg.svg'
+import BalanceMark from '../../assets/spentImg.svg'
+
 import axios from 'axios'
 
 import ProfitComp from "../../Components/ProfitComp";
@@ -145,20 +150,20 @@ function Home() {
     {/* Side bar */}
     <div className="w-[200px] min-h-screen bg-[#3B3363]">
       <div className="flex flex-col justify-center">
-        <img src="/assets/logo.png" alt="logo file" className="mx-auto mt-5" />
+        <img src={MrsDogeImg} alt="logo file" className="mx-auto mt-5" />
         <p className="text-[26px] text-white text-center font-bold">MrsDoge</p>
 
         <div
           className="flex flex-row justify-around items-center border-y-2 border-yellow-500 bg-[#2C254A] px-6 py-2 text-yellow-500 font-bold text-[22px] mt-6 cursor-pointer hover:brightness-125 duration-300"
           onClick={() => connectWalletManual()}
         >
-          <img className="w-[30px] h-[30px]" src="/assets/metamask.png" />
+          <img className="w-[30px] h-[30px]" src={BtcMark} />
           {address == '' ? <p>Connect</p> : <p className="text-[16px] text-left pl-4">{address.slice(0, 14) + '...'}</p>}
 
         </div>
         {/* Ticket List */}
         <div className="flex flex-row items-center justify-start gap-2 pl-5 mt-5">
-          <img src="/assets/ticketImg.svg"></img>
+          <img src={TicketMark}></img>
           <div className="flex flex-col gap-0">
             <p className="text-white">Your Tickets</p>
             <p className="-mt-1 text-yellow-400">{ownTicket} Tickets</p>
@@ -176,7 +181,7 @@ function Home() {
 
         {/* Your BTC Spent */}
         <div className="flex flex-row items-center justify-start gap-2 pl-5 mt-5">
-          <img src="/assets/spentImg.svg"></img>
+          <img src={BalanceMark}></img>
           <div className="flex flex-col gap-0">
             <p className="text-white">Your Token Balance</p>
             <p className="-mt-1 text-yellow-400">{tokenBalance} Tickets</p>
@@ -229,10 +234,10 @@ function Home() {
         {/* Ticket Counter */}
         <div className="flex flex-col w-1/3 p-6 mt-20">
           {/* Counter */}
-          <div className="flex flex-row px-8 justify-between items-center w-full border border-pink-600 rounded-lg mb-4">
+          <div className="flex flex-row items-center justify-between w-full px-8 mb-4 border border-pink-600 rounded-lg">
             <RiArrowUpSLine
               size={40}
-              className="cursor-pointer text-gray-500 hover:text-white"
+              className="text-gray-500 cursor-pointer hover:text-white"
               onClick={() => setTicketCount(1)}
             />
             <div className="text-gray-500 text-[20px] flex flex-row items-center gap-2">
@@ -240,12 +245,12 @@ function Home() {
             </div>
             <RiArrowDownSLine
               size={40}
-              className="cursor-pointer text-gray-500 hover:text-white"
+              className="text-gray-500 cursor-pointer hover:text-white"
               onClick={() => setTicketCount(-1)}
             />
           </div>
           {/* Selector */}
-          <div className="w-full flex flex-wrap justify-between">
+          <div className="flex flex-wrap justify-between w-full">
             {selectArr.map((value, index) => (
               <div
                 className="border border-pink-500 rounded-xl text-white hover:bg-pink-600 w-[calc(25%-6px)] mt-2 text-center cursor-pointer"
@@ -310,7 +315,7 @@ function Home() {
               {Object.keys(ownTicketList).map((value, index) => index < 3 ? 
               <tr className="text-[22px] py-2" key={index}>
                 <td className="flex justify-center">
-                  <div className="bg-blue-500 text-black rounded-full w-8">{index + 1}</div>
+                  <div className="w-8 text-black bg-blue-500 rounded-full">{index + 1}</div>
                 </td>
                 <td>{value.slice(0, 18)+'...'}</td>
                 <td>{ownTicketList[value]}</td>
