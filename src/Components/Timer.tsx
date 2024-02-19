@@ -29,7 +29,7 @@ export default function MyTimer() {
   const endTime = stratTime + 12 * 3600; // use UNIX timestamp in seconds
 
   const remainingTime = endTime - stratTime;
-  const days = Math.ceil(remainingTime / daySeconds);
+  // const days = Math.ceil(remainingTime / daySeconds);
   // const daysDuration = days * daySeconds;
 
   return (

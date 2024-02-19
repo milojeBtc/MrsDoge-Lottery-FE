@@ -49,7 +49,7 @@ function Home() {
   //     LastBuy: 'N/A'
   //   },
   // ])
-  const [PotPrice, usePotPrice] = useState(INITIAL_POT_PRICE);
+  const [PotPrice, usePotPrice] = useState(0);
 
   // wallet
   const [address, SetAddress] = useState('');
@@ -128,6 +128,7 @@ function Home() {
   useEffect(() => {
     connectWallet();
     getOwnTicketList();
+    usePotPrice(INITIAL_POT_PRICE);
   }, []);
 
   useEffect(() => {
