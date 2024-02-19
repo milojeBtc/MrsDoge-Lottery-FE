@@ -26,8 +26,8 @@ const getTimeHours = (time: any) => ((time % daySeconds) / hourSeconds) | 0;
 // const getTimeDays = (time: any) => (time / daySeconds) | 0;
 
 export default function MyTimer() {
-  // const remainingTime = 12 * 3600 + 30; 
-  const [remainingTime, setRemainingTime] = useState(12 * 3600 + 30);
+  const remainingTime = 12 * 3600; 
+  // const [remainingTime, setRemainingTime] = useState(12 * 3600 + 30);
   // const days = Math.ceil(remainingTime / daySeconds);
   // const daysDuration = days * daySeconds;
 
