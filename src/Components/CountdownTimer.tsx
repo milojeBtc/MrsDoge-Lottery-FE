@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 
 interface TimerProps {
   targetDate: Date;
+  additionalDate: number
 }
 
-const CountdownTimer: React.FC<TimerProps> = ({ targetDate }) => {
+const CountdownTimer: React.FC<TimerProps> = ({ targetDate, additionalDate }) => {
+  // const [additionalTime, setAdditionalTime] = useState(additionalDate);
   const calculateTimeLeft = () => {
     const currentTime = new Date().getTime();
-    const timeDifference = targetDate.getTime() - currentTime;
+    const timeDifference = targetDate.getTime() - currentTime + additionalDate;
 
     let timeLeft = {};
 
@@ -24,6 +26,7 @@ const CountdownTimer: React.FC<TimerProps> = ({ targetDate }) => {
   };
 
   const [timeLeft, setTimeLeft]:any = useState(calculateTimeLeft());
+  
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -49,7 +52,9 @@ const CountdownTimer: React.FC<TimerProps> = ({ targetDate }) => {
 
   return (
     <div>
-      {timerComponents.length ? timerComponents : <span>Time's up!</span>}
+      <div className='text-white text-[24px]'>
+        {timerComponents.length ? timerComponents : <span>Time's up!</span>}
+      </div>
     </div>
   );
 };

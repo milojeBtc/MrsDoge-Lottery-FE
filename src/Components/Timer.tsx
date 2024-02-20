@@ -1,4 +1,4 @@
-// import { useState } from "react";
+import { useState } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 
 const minuteSeconds = 60;
@@ -26,20 +26,18 @@ const getTimeHours = (time: any) => ((time % daySeconds) / hourSeconds) | 0;
 // const getTimeDays = (time: any) => (time / daySeconds) | 0;
 
 export default function MyTimer() {
-  const remainingTime = 12 * 3600; 
-  // const [remainingTime, setRemainingTime] = useState(12 * 3600 + 30);
-  // const days = Math.ceil(remainingTime / daySeconds);
-  // const daysDuration = days * daySeconds;
+  const [additionalTime, setAdditionalTime] = useState(0);
+  let remainingTime = 12 * 3600; 
 
   return (
-    <div className="App flex flex-row gap-10">
+    <div className="flex flex-row gap-10 App">
       <CountdownCircleTimer
         {...timerProps}
         colors="#D14081"
         duration={daySeconds}
-        initialRemainingTime={remainingTime % daySeconds}
+        initialRemainingTime={(remainingTime + additionalTime * 1000) % daySeconds}
         onComplete={(totalElapsedTime) => ({
-          shouldRepeat: remainingTime - totalElapsedTime > hourSeconds
+          shouldRepeat: (remainingTime + additionalTime * 1000) - totalElapsedTime > hourSeconds
         })}
       >
         {({ elapsedTime, color }) => (
@@ -52,9 +50,9 @@ export default function MyTimer() {
         {...timerProps}
         colors="#EF798A"
         duration={hourSeconds}
-        initialRemainingTime={remainingTime % hourSeconds}
+        initialRemainingTime={(remainingTime + additionalTime * 1000) % hourSeconds}
         onComplete={(totalElapsedTime) => ({
-          shouldRepeat: remainingTime - totalElapsedTime > minuteSeconds
+          shouldRepeat: (remainingTime + additionalTime * 1000) - totalElapsedTime > minuteSeconds
         })}
       >
         {({ elapsedTime, color }) => (
@@ -67,9 +65,9 @@ export default function MyTimer() {
         {...timerProps}
         colors="#218380"
         duration={minuteSeconds}
-        initialRemainingTime={remainingTime % minuteSeconds}
+        initialRemainingTime={(remainingTime + additionalTime * 1000) % minuteSeconds}
         onComplete={(totalElapsedTime) => ({
-          shouldRepeat: remainingTime - totalElapsedTime > 0
+          shouldRepeat: (remainingTime + additionalTime * 1000) - totalElapsedTime > 0
         })}
       >
         {({ elapsedTime, color }) => (
@@ -78,6 +76,9 @@ export default function MyTimer() {
           </span>
         )}
       </CountdownCircleTimer>
+      <div className="p-2 text-white bg-black" onClick={() => setAdditionalTime(flag => flag + 30 * 1000)}>
+          add time
+      </div>
     </div>
   );
 }
