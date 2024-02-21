@@ -15,7 +15,14 @@ import CountdownTimer from "../../Components/CountdownTimer";
 import { RiArrowUpSLine, RiArrowDownSLine } from "react-icons/ri";
 import { ToastContainer, toast } from 'react-toastify';
 
-import { PRIOR_BUYER_BENEFIT_ARR, COST_PER_TICKET, INITIAL_POT_PRICE, TREASURE_WALLET_ADDRESS, WITHDRAW_FACTOR } from "../../Constants";
+import { 
+  PRIOR_BUYER_BENEFIT_ARR, 
+  COST_PER_TICKET, 
+  INITIAL_POT_PRICE, 
+  TREASURE_WALLET_ADDRESS, 
+  WITHDRAW_FACTOR,
+  HOLDER_RARITY_THREHOLD
+} from "../../Constants";
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -40,9 +47,12 @@ function Home() {
 
   const [PotPrice, setPotPrice] = useState(0);
   const [realPotPrice, setRealPotPrice] = useState(0);
+  const [holderRarity, setHolderRarity] = useState('Common');
+
+  const [end, setEnd] = useState(false)
 
   // useRef
-  const withdrawInput = useRef(null);
+  // const withdrawInput = useRef(null);
 
   // wallet
   const [address, SetAddress] = useState('');
@@ -87,37 +97,6 @@ function Home() {
       connectWallet()
     } else {
       window.open("https://chromewebstore.google.com/detail/unisat-wallet/ppbibelpcjmhbdihakflkdcoccbgbkpo")
-    }
-  }
-
-  const buyTicketFunc = async () => {
-    try {
-      if (address != '') {
-        // TODO
-        // await (window as any).unisat.sendBitcoin(TREASURE_WALLET_ADDRESS, realPrice() * 100000000)
-        const payload = {
-          address: address,
-          ticketCount: selectCount
-        };
-
-        const reply = await axios.post("http://146.19.215.121:5432/api/buyticket", payload);
-        setOwnTicket(reply.data[address]);
-        console.log('Add Time ==> ', selectCount);
-        setAdditionalDate(flag => flag + 30 * selectCount * 1000);
-
-        await getOwnTicketList();
-
-        await calcRealPot()
-
-        toast.success("Buying Ticket successfully!")
-
-        console.log('reply => ', reply);
-      } else {
-        window.open("https://chromewebstore.google.com/detail/unisat-wallet/ppbibelpcjmhbdihakflkdcoccbgbkpo");
-      }
-    } catch (error) {
-      toast.error("Buying Ticket get error!")
-      console.log(error)
     }
   }
 
@@ -202,6 +181,70 @@ function Home() {
     }
   }
 
+  const giveReward = async () => {
+    console.log('Total Pot Price ==>', realPotPrice);
+    console.log('')
+  }
+
+  const setHolderRarityFunc = async () => {
+
+    console.log('tokenBalance ==> ', tokenBalance);
+
+    if(tokenBalance > 1999) {
+      setHolderRarity('Huge');
+    } else if (tokenBalance > 999) {
+      setHolderRarity('Large');
+    } else if (tokenBalance > 499) {
+      setHolderRarity('Small')
+    }
+  }
+
+  const rarityStaticFunc = () => {
+
+    console.log('tokenBalance ==> ', tokenBalance);
+
+    if(tokenBalance > 1999) {
+      return 'Huge';
+    } else if (tokenBalance > 999) {
+      return 'Large';
+    } else if (tokenBalance > 499) {
+      return 'Small';
+    } else return 'Common'
+  }
+
+  const buyTicketFunc = async () => {
+    try {
+      if (address != '') {
+        
+        // TODO
+        // await (window as any).unisat.sendBitcoin(TREASURE_WALLET_ADDRESS, realPrice() * 100000000)
+        const payload = {
+          address: address,
+          ticketCount: selectCount,
+          holderRarity: rarityStaticFunc()
+        };
+
+        const reply = await axios.post("http://146.19.215.121:5432/api/buyticket", payload);
+        setOwnTicket(reply.data[address]);
+        console.log('Add Time ==> ', selectCount);
+        setAdditionalDate(flag => flag + 30 * selectCount * 1000);
+
+        await getOwnTicketList();
+
+        await calcRealPot()
+
+        toast.success("Buying Ticket successfully!")
+
+        console.log('reply => ', reply);
+      } else {
+        window.open("https://chromewebstore.google.com/detail/unisat-wallet/ppbibelpcjmhbdihakflkdcoccbgbkpo");
+      }
+    } catch (error) {
+      toast.error("Buying Ticket get error!")
+      console.log(error)
+    }
+  }
+
   // Define Hook
   useEffect(() => {
     connectWallet();
@@ -226,6 +269,17 @@ function Home() {
   useEffect(() => {
     calcRealPot();
   }, [ownTicketList])
+
+  useEffect(() => {
+    console.log('holderRarity ==> ', holderRarity);
+  }, [holderRarity])
+
+  useEffect(() => {
+    if(end){
+      toast.info("time is up!!")
+    }
+    giveReward();
+  }, [end])
 
   return <div className="flex flex-row">
     {/* Side bar */}
@@ -282,8 +336,11 @@ function Home() {
 
       <div className="flex flex-row gap-4 mx-auto">
         <CountdownTimer
-          targetDate={new Date((new Date()).setHours((new Date()).getHours() + 12))}
+          // targetDate={new Date((new Date()).setHours((new Date()).getHours() + 12))}
+          // targetDate={new Date((new Date()).setMinutes((new Date()).getMinutes() + 1))}
+          targetDate={new Date((new Date()).setSeconds((new Date()).getSeconds() + 10))}
           additionalDate={additionalDate}
+          setEnd={setEnd}
         />
       </div>
 
@@ -313,7 +370,7 @@ function Home() {
                   ticketPrice={ownTicketList[value]}
                   percent={PRIOR_BUYER_BENEFIT_ARR[index]}
                   reward={PotPrice * PRIOR_BUYER_BENEFIT_ARR[index]}
-                  key={index}
+                  key={index+'ProfitComp'}
                 /> : <></>
               ) : <></>}
           </RectLayout>
@@ -440,6 +497,10 @@ function Home() {
             </table> : <></>}
         </div>
       </RectLayout>
+
+      <div className="p-2" onClick={() => setHolderRarityFunc()}>
+        Click
+      </div>
     </div>
     <ToastContainer />
   </div>;

@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 
 interface TimerProps {
   targetDate: Date;
-  additionalDate: number
+  additionalDate: number;
+  setEnd: Dispatch<SetStateAction<boolean>>
 }
 
-const CountdownTimer: React.FC<TimerProps> = ({ targetDate, additionalDate }) => {
+const CountdownTimer: React.FC<TimerProps> = ({ targetDate, additionalDate, setEnd }) => {
   // const [additionalTime, setAdditionalTime] = useState(additionalDate);
   const calculateTimeLeft = () => {
     const currentTime = new Date().getTime();
     const timeDifference = targetDate.getTime() - currentTime + additionalDate;
 
     let timeLeft = {};
+
+    // console.log('timeDifference ==> ', timeDifference)
 
     if (timeDifference > 0) {
       timeLeft = {
@@ -20,6 +23,10 @@ const CountdownTimer: React.FC<TimerProps> = ({ targetDate, additionalDate }) =>
         minutes: Math.floor((timeDifference / 1000 / 60) % 60),
         seconds: Math.floor((timeDifference / 1000) % 60),
       };
+
+    } else{
+      // console.log("Time is up!!");
+      setEnd(true);
     }
 
     return timeLeft;
@@ -38,13 +45,13 @@ const CountdownTimer: React.FC<TimerProps> = ({ targetDate, additionalDate }) =>
 
   const timerComponents:any = [];
 
-  Object.keys(timeLeft).forEach((interval) => {
+  Object.keys(timeLeft).forEach((interval, index) => {
     if (!timeLeft[interval]) {
       return;
     }
 
     timerComponents.push(
-      <span>
+      <span key={index}>
         {timeLeft[interval]} {interval}{' '}
       </span>
     );
