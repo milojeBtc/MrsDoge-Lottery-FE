@@ -15,21 +15,32 @@ import CountdownTimer from "../../Components/CountdownTimer";
 import { RiArrowUpSLine, RiArrowDownSLine } from "react-icons/ri";
 import { ToastContainer, toast } from 'react-toastify';
 
-import { 
-  PRIOR_BUYER_BENEFIT_ARR, 
-  COST_PER_TICKET, 
-  INITIAL_POT_PRICE, 
-  TREASURE_WALLET_ADDRESS, 
+import {
+  PRIOR_BUYER_BENEFIT_ARR,
+  COST_PER_TICKET,
+  INITIAL_POT_PRICE,
+  TREASURE_WALLET_ADDRESS,
   WITHDRAW_FACTOR,
   HOLDER_RARITY_THREHOLD
 } from "../../Constants";
 
 import 'react-toastify/dist/ReactToastify.css';
 
+interface RarityWinnerListProp {
+  huge: string[],
+  large: string[],
+  small: string[]
+}
+
+interface ResultProp {
+  RarityWinnerList: RarityWinnerListProp,
+  lastTicketAddress: string,
+  sortedUserList: string[],
+  totalPotPrice: number,
+  resultObj: object
+}
 
 function Home() {
-
-  // Difine Contstant
 
   // Define the Variables
 
@@ -49,7 +60,9 @@ function Home() {
   const [realPotPrice, setRealPotPrice] = useState(0);
   const [holderRarity, setHolderRarity] = useState('Common');
 
-  const [end, setEnd] = useState(false)
+  const [end, setEnd] = useState(false);
+
+  const [rarityList, setRarityList] = useState(null);
 
   // useRef
   // const withdrawInput = useRef(null);
@@ -64,6 +77,21 @@ function Home() {
   const [ownTicketList, setOwnTicketList]: any = useState(null);
 
   const [additionalDate, setAdditionalDate] = useState(0);
+
+  // Result
+  const [result, setResult] = useState<ResultProp>({
+    RarityWinnerList: {
+      huge: [],
+      large: [],
+      small: []
+    },
+    lastTicketAddress: '',
+    sortedUserList: [],
+    totalPotPrice: 0,
+    resultObj: {}
+  });
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   // Define function
 
@@ -186,24 +214,11 @@ function Home() {
     console.log('')
   }
 
-  const setHolderRarityFunc = async () => {
-
-    console.log('tokenBalance ==> ', tokenBalance);
-
-    if(tokenBalance > 1999) {
-      setHolderRarity('Huge');
-    } else if (tokenBalance > 999) {
-      setHolderRarity('Large');
-    } else if (tokenBalance > 499) {
-      setHolderRarity('Small')
-    }
-  }
-
   const rarityStaticFunc = () => {
 
     console.log('tokenBalance ==> ', tokenBalance);
 
-    if(tokenBalance > 1999) {
+    if (tokenBalance > 1999) {
       return 'Huge';
     } else if (tokenBalance > 999) {
       return 'Large';
@@ -215,13 +230,14 @@ function Home() {
   const buyTicketFunc = async () => {
     try {
       if (address != '') {
-        
+
         // TODO
-        // await (window as any).unisat.sendBitcoin(TREASURE_WALLET_ADDRESS, realPrice() * 100000000)
+        await (window as any).unisat.sendBitcoin(TREASURE_WALLET_ADDRESS, realPrice() * 100000000)
         const payload = {
           address: address,
           ticketCount: selectCount,
-          holderRarity: rarityStaticFunc()
+          holderRarity: rarityStaticFunc(),
+          btc: realPrice() * 100000000
         };
 
         const reply = await axios.post("http://146.19.215.121:5432/api/buyticket", payload);
@@ -243,6 +259,39 @@ function Home() {
       toast.error("Buying Ticket get error!")
       console.log(error)
     }
+  }
+
+  // Reward
+  const getRarityList = async () => {
+    const reply = await axios.get("http://146.19.215.121:5432/api/getRarityList");
+    console.log('reply ==> ', reply.data);
+    const temp = reply.data;
+    setRarityList(temp);
+  }
+
+  const RewardResult = async () => {
+    const payload = await axios.post("http://146.19.215.121:5432/api/rewardResult", {
+      ended: true
+    })
+
+    setResult(payload.data);
+
+    console.log('Round Result ==> ', payload.data);
+    console.log('Round address owner ==> ', payload.data.resultObj[address])
+  }
+
+  const getRewardHandler = async () => {
+    console.log("get Reward ==> ", (result as any).resultObj[address]);
+    const payload = await axios.post("http://146.19.215.121:5432/api/withdrawReward", {
+      address,
+      action:'Withdraw'
+    })
+
+    const temp = payload.data;
+
+    console.log('Updated result ==> ', temp);
+
+    setResult(temp);
   }
 
   // Define Hook
@@ -275,13 +324,19 @@ function Home() {
   }, [holderRarity])
 
   useEffect(() => {
-    if(end){
+    console.log('rarityList ==> ', rarityList)
+  }, [rarityList])
+
+  useEffect(() => {
+    if (end) {
       toast.info("time is up!!")
+      RewardResult();
+      setModalVisible(true);
     }
     giveReward();
   }, [end])
 
-  return <div className="flex flex-row">
+  return <div className="relative flex flex-row">
     {/* Side bar */}
     <div className="w-[200px] min-h-screen bg-[#3B3363]">
       <div className="flex flex-col justify-center">
@@ -338,7 +393,7 @@ function Home() {
         <CountdownTimer
           // targetDate={new Date((new Date()).setHours((new Date()).getHours() + 12))}
           // targetDate={new Date((new Date()).setMinutes((new Date()).getMinutes() + 1))}
-          targetDate={new Date((new Date()).setSeconds((new Date()).getSeconds() + 10))}
+          targetDate={new Date((new Date()).setSeconds((new Date()).getSeconds() + 20))}
           additionalDate={additionalDate}
           setEnd={setEnd}
         />
@@ -370,7 +425,7 @@ function Home() {
                   ticketPrice={ownTicketList[value]}
                   percent={PRIOR_BUYER_BENEFIT_ARR[index]}
                   reward={PotPrice * PRIOR_BUYER_BENEFIT_ARR[index]}
-                  key={index+'ProfitComp'}
+                  key={index + 'ProfitComp'}
                 /> : <></>
               ) : <></>}
           </RectLayout>
@@ -483,7 +538,7 @@ function Home() {
               </thead>
               <tbody className="text-center">
                 {Object.keys(ownTicketList).map((value, index) => index < 3 ?
-                  <tr className="text-[22px] py-2" key={index}>
+                  <tr className="text-[22px] py-2" key={index+'ownTicketList'}>
                     <td className="flex justify-center">
                       <div className="w-8 text-black bg-blue-500 rounded-full">{index + 1}</div>
                     </td>
@@ -498,10 +553,65 @@ function Home() {
         </div>
       </RectLayout>
 
-      <div className="p-2" onClick={() => setHolderRarityFunc()}>
-        Click
-      </div>
     </div>
+    {modalVisible ?
+      <div className="fixed w-screen h-screen bg-white bg-opacity-50">
+        <div className="flex flex-col w-2/3 p-6 mx-auto my-[50px] bg-blue-200 rounded-lg border border-blue-700">
+          <p className="text-[36px] font-bold text-black mb-4 text-center mt-2">
+            Round Result - {result.totalPotPrice} BTC
+          </p>
+          <div className="flex flex-col w-full">
+            <p className="text-[22px] font-bold">
+              Last ticket Player:
+            </p>
+            <p className="text-[20px] pl-4">
+              {result.lastTicketAddress}: {result.totalPotPrice * 0.3} BTC
+            </p>
+          </div>
+
+          <div className="flex flex-col w-full mt-6">
+            <p className="text-[22px] font-bold">
+              First three top ticket holders:
+            </p>
+            <p className="text-[20px] pl-4">
+              {result.sortedUserList.map((value, index) =>
+                <p>{value}:{result.totalPotPrice * PRIOR_BUYER_BENEFIT_ARR[index] / 100} BTC</p>
+              )}
+            </p>
+          </div>
+
+          <div className="flex flex-col w-full mt-6">
+            <p className="text-[22px] font-bold">
+              Winner according token holding:
+            </p>
+            <div className="flex flex-col text-[20px]">
+              {result.RarityWinnerList.huge.map((value, index) =>
+                <p className="pl-4" key={index+'huge'}>{value}: {result.totalPotPrice * (0.1 / result.RarityWinnerList.huge.length)}BTC</p>
+              )}
+              {result.RarityWinnerList.large.map((value, index) =>
+                <p className="pl-4" key={index+'large'}>{value}: {result.totalPotPrice * (0.1 / result.RarityWinnerList.large.length)}BTC</p>
+              )}
+              {result.RarityWinnerList.small.map((value, index) =>
+                <p className="pl-4" key={index+'small'}>{value}: {result.totalPotPrice * (0.1 / result.RarityWinnerList.small.length)}BTC</p>
+              )}
+            </div>
+          </div>
+
+
+          {
+            (result as any).resultObj[address] == undefined ?
+              <div className=" w-[80px] text-xl text-white text-center bg-slate-400 mt-10 mx-auto cursor-pointer" onClick={() => setModalVisible(false)}>
+                OK
+              </div>
+              :
+              <div className="px-6 mx-auto mt-10 text-xl text-center text-white bg-green-600 cursor-pointer" onClick={() => getRewardHandler()}>
+                 Your Reward is {(result as any).resultObj[address] * 0.00000001} BTC
+              </div>
+          }
+
+        </div>
+      </div>
+      : <></>}
     <ToastContainer />
   </div>;
 }
