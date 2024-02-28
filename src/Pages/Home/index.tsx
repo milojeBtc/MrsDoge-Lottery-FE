@@ -383,7 +383,7 @@ function Home() {
   // }, [roundTime]);
 
   return <div className="relative flex flex-col main-font-style">
-    <div className="w-screen overflow-hidden min-h-screen bg-[url(/bg.png)] pb-10 text-blue-950 text-[18px] font-bold pt-10 min-[1080px]:px-32 max-[1080px]:px-10">
+    <div className="w-screen overflow-hidden min-h-screen bg-[url(/bg.png)] pb-10 text-blue-950 text-[18px] font-bold pt-10 min-[1080px]:px-32 max-[1080px]:px-10 max-[400px]:px-4">
       {/* Loading bar */}
       <div className="w-full h-4 bg-blue-950 bg-opacity-80 mb-4"></div>
       
@@ -397,8 +397,8 @@ function Home() {
       </div>
 
       {/* Holiday softward 1.0 Content* */}
-      <div className="flex min-[880px]:flex-row max-[880px]:flex-col justify-between w-full px-10 py-2 border border-t-0 border-b-2 border-x-0 border-b-blue-950">
-        <div className="flex min-[460px]:flex-row max-[460px]:flex-col min-[880px]:w-1/3 max-[880px]:w-full min-[880px]:ml-auto max-[880px]:justify-center gap-2">
+      <div className="flex min-[880px]:flex-row max-[880px]:flex-col justify-between w-full min-[400px]:px-10 max-[400px]:px-2 py-2 border border-t-0 border-b-2 border-x-0 border-b-blue-950">
+        <div className="flex min-[460px]:flex-row max-[460px]:flex-col min-[880px]:w-1/3 max-[880px]:w-full min-[880px]:ml-auto max-[880px]:justify-center min-[460px]:gap-2 max-[460px]:gap-0">
           <p className="text-center">NEXT HOLIDAY IN: </p> {calculateTime()}
         </div>
         <div className="flex flex-col min-[880px]:w-1/3 max-[880px]:w-full gap-3 mx-auto text-center">
@@ -415,20 +415,20 @@ function Home() {
       </div>
 
       {/* Second part Content*/}
-      <div className="flex flex-row justify-between w-full px-10 mt-6">
+      <div className="flex min-[880px]:flex-row max-[880px]:flex-col justify-between w-full min-[400px]:px-10 max-[400px]:px-2 mt-6">
         {/* Left */}
-        <div className="flex flex-col w-1/3 gap-3 ml-auto">
+        <div className="flex flex-col min-[880px]:w-1/3 max-[880px]:w-full gap-3 min-[880px]:ml-auto max-[880px]:mx-auto mb-10">
           <p className="">Your Round Statistics</p>
-          <p className=""><span className="font-bold">&lt;</span> {address.slice(0, 20)}... <span>&gt;</span></p>
+          <p className=""><span className="font-bold">&lt;</span> {address.slice(0, 14)}... <span>&gt;</span></p>
           <p className="">CURRENT ROUND Number:{roundNumber}</p>
           <p className="">YOUR TICKETS for Current Round:{ownTicket}</p>
           <p className="">Membership Discount:{bonusFactor}</p>
         </div>
         {/* Center */}
-        <div className="flex flex-col w-1/3 gap-3 mx-auto text-center">
+        <div className="flex flex-col min-[880px]:w-1/3 max-[880px]:w-full gap-3 mx-auto text-center mb-10">
           <p>BUY A HOLIDAY TICKET(S)</p>
           {/* Counter */}
-          <div className="flex flex-row items-center justify-between w-1/2 mx-auto">
+          <div className="flex flex-row items-center justify-between w-full mx-auto">
             <div 
               className="text-[30px] font-bold text-blue-950 cursor-pointer hover:text-white"
               onClick={() => setTicketCount(-1)}
@@ -455,7 +455,7 @@ function Home() {
           </div>
         </div>
         {/* Right */}
-        <div className="flex flex-col w-1/3 gap-3 mr-auto pl-10">
+        <div className="flex flex-col min-[880px]:w-1/3 max-[880px]:w-full gap-3 min-[880px]:mr-auto max-[880px]:mx-auto min-[880px]:pl-10 max-[880px]:pl-0">
             <p className="">Current Round Statistics</p>
             <p className="">Total Round tickets purchased: {totalTicket}</p>
             <p className="">Total BTC Spent:{totalCount.totalBtc}</p>
@@ -468,11 +468,11 @@ function Home() {
       </div>
 
       {/* PROFITABILITY Content */}
-      <div className="flex flex-row justify-between w-full mx-10 text-ce">
+      <div className="flex min-[880px]:flex-row max-[880px]:flex-col justify-between w-full mx-0">
         {/* Left */}
         {ownTicketList != null ?
           Object.keys(ownTicketList).map((value, index) => index < 3 ?
-            <div className="flex flex-col w-1/3 gap-1" key={index + 'ProfitComp'}>
+            <div className="flex flex-col min-[880px]:w-1/3 max-[880px]:w-full max-[880px]:mt-10 gap-1" key={index + 'ProfitComp'}>
               <p className="mb-4">Tickets Needed To Be {nthTitle[index]} PLACE: {ownTicketList[value] + 1}</p>
               <p className="">Cost of Tickets: {COST_PER_TICKET * (1 - bonusFactor)} BTC </p>
               <p className="">Percentage {nthTitle[index]} Place Wins: {PRIOR_BUYER_BENEFIT_ARR[index]}</p>
@@ -508,7 +508,8 @@ function Home() {
                   <td className="flex justify-center">
                     <div className="">{Math.floor(index / 10)}{index + 1}</div>
                   </td>
-                  <td>{value.slice(0, 18) + '...'}</td>
+                  <td className="max-[550px]:hidden">{value.slice(0, 18) + '...'}</td>
+                  <td className="min-[550px]:hidden">{value.slice(0, 7) + '...'}</td>
                   <td>{ownTicketList[value]}</td>
                   <td>0</td>
                 </tr> : <></>)}
