@@ -21,7 +21,7 @@ table td {
 
 @font-face {
   font-family: "Perfect DOS VGA 437 Font";
-  src: url("../public/font/perfect_dos_vga_437/Perfect\ DOS\ VGA\ 437.ttf") format("truetype"),
+  src: url("/font/perfect_dos_vga_437/Perfect\ DOS\ VGA\ 437.ttf") format("truetype"),
 }
 
 .main-font-style {

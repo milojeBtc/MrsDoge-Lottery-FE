@@ -370,7 +370,11 @@ function Home() {
   return <div className="relative flex flex-col main-font-style">
     <div className="w-screen overflow-hidden min-h-screen bg-[url(/bg.png)] pb-10 text-blue-950 text-[18px] pt-10 min-[1080px]:px-32 max-[1080px]:px-10 max-[400px]:px-4">
       {/* Loading bar */}
-      <div className="w-full h-4 mb-4 bg-blue-950 bg-opacity-80"></div>
+      <div className="relative w-full h-4 mb-4 bg-blue-950 bg-opacity-80">
+        <div className="absolute w-2/3 h-full bg-white bg-opacity-80">
+
+        </div>
+      </div>
       
       {/* Holiday softward 1.0 Line*/}
       <div className="flex flex-row items-center w-full">
