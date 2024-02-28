@@ -296,6 +296,10 @@ function Home() {
       } else {
         console.log("===================================")
         setEnd(true);
+        setModalVisible(true);
+        let totalResult = recentTime.data.TotalResult;
+        console.log('TotalResult ==> ', totalResult);
+        // setResult(totalResult);
       }
 
       // Get Own List
@@ -339,12 +343,7 @@ function Home() {
     connectWallet();
     getOwnTicketList();
     timerInterval()
-    // setPotPrice(INITIAL_POT_PRICE);
   }, []);
-
-  useEffect(() => {
-    console.log('realPotPrice ==> ', realPotPrice);
-  }, [realPotPrice])
 
   useEffect(() => {
     if (tokenBalance > 1000) {
@@ -361,26 +360,12 @@ function Home() {
   }, [ownTicketList])
 
   useEffect(() => {
-    console.log('holderRarity ==> ', holderRarity);
-  }, [holderRarity])
-
-  useEffect(() => {
-    console.log('rarityList ==> ', rarityList)
-  }, [rarityList])
-
-  useEffect(() => {
     if (end) {
       toast.info("time is up!!")
       RewardResult();
       setModalVisible(true);
     }
   }, [end])
-
-  // useEffect(() => {
-  //   if(roundTime < 0){
-  //     setEnd(true);
-  //   }
-  // }, [roundTime]);
 
   return <div className="relative flex flex-col main-font-style">
     <div className="w-screen overflow-hidden min-h-screen bg-[url(/bg.png)] pb-10 text-blue-950 text-[18px] font-bold pt-10 min-[1080px]:px-32 max-[1080px]:px-10 max-[400px]:px-4">
