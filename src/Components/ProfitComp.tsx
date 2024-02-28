@@ -17,7 +17,7 @@ const ProfitComp = ({
         </div>
         <div className='flex flex-row mt-1 items-center'>
             <p className='mr-auto text-white w-2/3'>Cost Of Tickets:</p>
-            <p className='font-bold text-[#fe41e2] ml-auto'>{ticketPrice} BTC</p>
+            <p className='font-bold text-[#fe41e2] ml-auto'>{ticketPrice * 100000000} sats</p>
         </div>
         <div className='flex flex-row mt-1 items-center'>
             <p className='mr-auto text-white w-2/3'>Percentage That The First Place Wins:</p>
@@ -25,7 +25,7 @@ const ProfitComp = ({
         </div>
         <div className='flex flex-row mt-1 items-center'>
             <p className='mr-auto text-white'>Amount To Be Won:</p>
-            <p className='font-bold text-[#fe41e2] ml-auto'>{reward} BTC</p>
+            <p className='font-bold text-[#fe41e2] ml-auto'>{nth * ticketPrice} BTC</p>
         </div>
     </div>
   )

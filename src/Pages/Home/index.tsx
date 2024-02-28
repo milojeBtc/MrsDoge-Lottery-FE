@@ -10,7 +10,7 @@ import axios from 'axios'
 import ProfitComp from "../../Components/ProfitComp";
 import RectComp from "../../Components/RectComp";
 import RectLayout from "../../Components/rectLayout";
-import CountdownTimer from "../../Components/CountdownTimer";
+// import CountdownTimer from "../../Components/CountdownTimer";
 
 import { RiArrowUpSLine, RiArrowDownSLine } from "react-icons/ri";
 import { ToastContainer, toast } from 'react-toastify';
@@ -54,6 +54,8 @@ function Home() {
 
   // Set State
 
+  const [roundTime, setRoundTime] = useState(100000);
+
   const [selectCount, setSelectCount] = useState(0);
 
   const [PotPrice, setPotPrice] = useState(0);
@@ -63,6 +65,8 @@ function Home() {
   const [end, setEnd] = useState(false);
 
   const [rarityList, setRarityList] = useState(null);
+
+  const [roundNumber, setRoundNumber] = useState(null);
 
   // useRef
   // const withdrawInput = useRef(null);
@@ -75,8 +79,6 @@ function Home() {
   const [bonusFactor, setBonusFactor] = useState(0);
   const [ownTicket, setOwnTicket] = useState(0);
   const [ownTicketList, setOwnTicketList]: any = useState(null);
-
-  const [additionalDate, setAdditionalDate] = useState(0);
 
   // Result
   const [result, setResult] = useState<ResultProp>({
@@ -107,7 +109,7 @@ function Home() {
       let accounts = await (window as any).unisat.requestAccounts();
       SetAddress(accounts[0]);
       console.log('connect success', accounts[0]);
-      const reply = await axios.post("http://146.19.215.121:5432/api/brc/getInfo", {
+      const reply = await axios.post("http://localhost:5432/api/brc/getInfo", {
         address: accounts[0],
         tickerName: 'MEMQ'
       });
@@ -129,7 +131,7 @@ function Home() {
   }
 
   const getOwnTicketList = async () => {
-    const reply = await axios.get("http://146.19.215.121:5432/api/getOwnTicketList");
+    const reply = await axios.get("http://localhost:5432/api/getOwnTicketList");
     console.log('getOwnTicketList ==> ', reply.data);
 
     let list = reply.data;
@@ -174,7 +176,7 @@ function Home() {
         console.log('withdraw realPrice ==> ', withdrawAmount);
 
         // TODO
-        // const result = await axios.post("http://146.19.215.121:5432/api/cbrc/sendBTC", {
+        // const result = await axios.post("http://localhost:5432/api/cbrc/sendBTC", {
         //   amount: withdrawAmount,
         //   targetAddress: address,
         //   feeRate: 5
@@ -188,7 +190,7 @@ function Home() {
           address: address,
           ticketCount: ownTicket
         };
-        const reply = await axios.post("http://146.19.215.121:5432/api/withdrawTicket", payload);
+        const reply = await axios.post("http://localhost:5432/api/withdrawTicket", payload);
         setOwnTicket(reply.data[address]);
         // console.log('Add Time ==> ', selectCount);
         // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
@@ -240,10 +242,10 @@ function Home() {
           btc: realPrice() * 100000000
         };
 
-        const reply = await axios.post("http://146.19.215.121:5432/api/buyticket", payload);
+        const reply = await axios.post("http://localhost:5432/api/buyticket", payload);
         setOwnTicket(reply.data[address]);
         console.log('Add Time ==> ', selectCount);
-        setAdditionalDate(flag => flag + 30 * selectCount * 1000);
+        // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
 
         await getOwnTicketList();
 
@@ -262,15 +264,16 @@ function Home() {
   }
 
   // Reward
-  const getRarityList = async () => {
-    const reply = await axios.get("http://146.19.215.121:5432/api/getRarityList");
-    console.log('reply ==> ', reply.data);
-    const temp = reply.data;
-    setRarityList(temp);
-  }
+  // const getRarityList = async () => {
+  //   const reply = await axios.get("http://localhost:5432/api/getRarityList");
+  //   console.log('reply ==> ', reply.data);
+  //   const temp = reply.data;
+  //   setRarityList(temp);
+  // }
 
   const RewardResult = async () => {
-    const payload = await axios.post("http://146.19.215.121:5432/api/rewardResult", {
+    console.log('RewardResult ==> ==> ==> ==> ==> ==> ==> ==> ==>')
+    const payload = await axios.post("http://localhost:5432/api/rewardResult", {
       ended: true
     })
 
@@ -282,9 +285,9 @@ function Home() {
 
   const getRewardHandler = async () => {
     console.log("get Reward ==> ", (result as any).resultObj[address]);
-    const payload = await axios.post("http://146.19.215.121:5432/api/withdrawReward", {
+    const payload = await axios.post("http://localhost:5432/api/withdrawReward", {
       address,
-      action:'Withdraw'
+      action: 'Withdraw'
     })
 
     const temp = payload.data;
@@ -294,10 +297,55 @@ function Home() {
     setResult(temp);
   }
 
+  const timerInterval = () => {
+    setInterval(async () => {
+      let recentTime = await axios.get("http://localhost:5432/api/getRoundTime");
+      let now = recentTime.data.roundTime;
+      if (now > 0) {
+        setRoundTime(now);
+        console.log('recent time ==> ', now);
+      } else {
+        console.log("===================================")
+        setEnd(true);
+      }
+
+      // Get Own List
+      let list = recentTime.data.userList;
+      const sorted = Object.fromEntries(
+        Object.entries(list).sort(([, a]: any, [, b]: any) => b - a)
+      )
+      setOwnTicketList(sorted);
+      if (address != '') setOwnTicket(list[address]);
+
+      // Total Pot Price
+      let totalPotPrice = recentTime.data.totalPotPrice;
+      setPotPrice(totalPotPrice);
+
+      // Set Round
+      let roundNum = recentTime.data.roundNumber;
+      setRoundNumber(roundNum);
+    }, 1000)
+  }
+
+  const calculateTime = () => {
+    const hour = Math.floor(roundTime / 3600);
+    const min = Math.floor((roundTime % 3600) / 60);
+    const sec = Math.floor(roundTime % 60);
+
+    return (
+      <div className="text-center">
+        {hour} hours {min} mins {sec} sec
+      </div>
+    )
+  }
+
+  // Real time
+
   // Define Hook
   useEffect(() => {
     connectWallet();
     getOwnTicketList();
+    timerInterval()
     // setPotPrice(INITIAL_POT_PRICE);
   }, []);
 
@@ -333,10 +381,145 @@ function Home() {
       RewardResult();
       setModalVisible(true);
     }
-    giveReward();
   }, [end])
 
-  return <div className="relative flex flex-row">
+  // useEffect(() => {
+  //   if(roundTime < 0){
+  //     setEnd(true);
+  //   }
+  // }, [roundTime]);
+
+  return <div className="relative flex flex-col">
+    <div className="w-screen h-screen bg-blue-200 text-blue-900 text-[20px] font-bold pt-10 px-10">
+      {/* Holiday softward 1.0 Line*/}
+      <div className="w-full flex flex-row items-center">
+        <div className="flex-grow h-1 border border-y-2 border-black border-x-0"></div>
+        <div className="flex justify-center mx-4">
+          HOLIDAY SOFTWARE 1.0
+        </div>
+        <div className="flex-grow h-1 border border-y-2 border-black border-x-0"></div>
+      </div>
+
+      {/* Timer */}
+      <div className="w-full flex flex-row justify-between py-2 border border-t-0 border-x-0 border-b-blue-700 border-b-2">
+        <div className="flex flex-row gap-2 w-1/5 ml-auto">
+          <p>NEXT HOLIDAY IN: </p>
+          {calculateTime()}
+        </div>
+        <div className="flex flex-col w-1/5 gap-3 mx-auto text-center">
+          {Math.floor(PotPrice) / 100000000} BTC POT SIZE
+        </div>
+        <div className="flex flex-row justify-between gap-2 w-1/5 mr-auto ">
+          <div className="">
+            ROUND: {roundNumber}
+          </div>
+          <div className="cursor-pointer">
+            [ CONNECT WALLET ]
+          </div>
+        </div>
+      </div>
+
+      {/* Holiday softward 1.0 Content*/}
+      <div className="w-full flex flex-row justify-between mt-6">
+        {/* Left */}
+        <div className="flex flex-col gap-2 w-1/5 ml-auto">
+          <p className="">Your Round Statistics</p>
+          <p className="">{address.slice(0, 20)}...</p>
+          <p className="">CURRENT ROUND Number:{roundNumber}</p>
+          <p className="">YOUR TICKETS for Current Round:{roundNumber}</p>
+          <p className="">Membership Discount:{bonusFactor}</p>
+        </div>
+        {/* Center */}
+        <div className="flex flex-col w-1/5 gap-3 mx-auto text-center">
+          <p>BUY A HOLIDAY TICKET(S)</p>
+          {/* Counter */}
+          <div className="flex flex-row items-center justify-between w-full">
+            <RiArrowUpSLine
+              size={40}
+              className="text-gray-500 cursor-pointer hover:text-white"
+              onClick={() => setTicketCount(1)}
+            />
+            <div className="text-gray-500 text-[20px] flex flex-row items-center gap-2">
+              <span className="font-bold text-[28px] text-white">{selectCount}</span><span> Ticket</span>
+            </div>
+            <RiArrowDownSLine
+              size={40}
+              className="text-gray-500 cursor-pointer hover:text-white"
+              onClick={() => setTicketCount(-1)}
+            />
+          </div>
+          {/* ticket price */}
+          <p className="">{COST_PER_TICKET * (1 - bonusFactor) * 100000000} sats per ticket</p>
+          <div
+            className="w-full mt-4 hover:shadow-blue-500 text-center font-bold text-[24px] cursor-pointer border border-blue-400"
+            onClick={() => buyTicketFunc()}
+          >
+            {realPrice()} BTC
+          </div>
+        </div>
+        {/* Right */}
+        <div className="flex flex-col gap-2 w-1/5 mr-auto">
+          <p className="">Current Round Statistics</p>
+          <p className="">Total BTC Spent:{totalCount.totalBtc}</p>
+          <p className="">Total Tickets Secured: 0</p>
+          <p className="">Total Tickets Burned: 0</p>
+        </div>
+      </div>
+
+      {/* PROFITABILITY METRICS Line */}
+      <div className="border border-y-2 border-x-0 border-blue-700 text-center mt-10 py-2 mb-3">
+        PROFITABILITY METRICS
+      </div>
+      {/* PROFITABILITY Content */}
+      <div className="w-full flex flex-row justify-between mx-44 text-ce">
+        {/* Left */}
+        {ownTicketList != null ?
+          Object.keys(ownTicketList).map((value, index) => index < 3 ?
+            <div className="flex flex-col gap-2 w-1/5" key={index + 'ProfitComp'}>
+              <p className="mb-2">Tickets Needed To Be FIRST PLACE: {ownTicketList[value] + 1}</p>
+              <p className="">Cost of Tickets: {COST_PER_TICKET * (1 - bonusFactor)} BTC </p>
+              <p className="">Percentage First Place Wins: {PRIOR_BUYER_BENEFIT_ARR[index]}</p>
+              <p className="">Amount to be won: {PotPrice * PRIOR_BUYER_BENEFIT_ARR[index]} BTC</p>
+            </div> : <></>
+          ) : <></>}
+      </div>
+
+      {/* Top BUYERS Line*/}
+      <div className="w-full flex flex-row items-center mt-20">
+        <div className="flex-grow h-1 border border-y-2 border-black border-x-0"></div>
+        <div className="flex justify-center mx-4">
+          TOP BUYERS
+        </div>
+        <div className="flex-grow h-1 border border-y-2 border-black border-x-0"></div>
+      </div>
+
+      {/* Top BUYERS Content */}
+      <div className="mx-24">
+        {ownTicketList != null ?
+          <table className="w-full border-spacing-2">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Address</th>
+                <th>Tickets</th>
+                <th>To Win</th>
+              </tr>
+            </thead>
+            <tbody className="text-center">
+              {Object.keys(ownTicketList).map((value, index) => index < 5 ?
+                <tr className="text-[22px] py-2" key={index + 'ownTicketList'}>
+                  <td className="flex justify-center">
+                    <div className="w-8 text-black bg-blue-500 rounded-full">{index + 1}</div>
+                  </td>
+                  <td>{value.slice(0, 18) + '...'}</td>
+                  <td>{ownTicketList[value]}</td>
+                  <td>TBD</td>
+                </tr> : <></>)}
+
+            </tbody>
+          </table> : <></>}
+      </div>
+    </div>
     {/* Side bar */}
     <div className="w-[200px] min-h-screen bg-[#3B3363]">
       <div className="flex flex-col justify-center">
@@ -380,7 +563,6 @@ function Home() {
 
       </div>
     </div>
-
     {/* Main Panel */}
     <div className="flex flex-col bg-[#2C254A] w-[calc(100%-200px)] p-10">
 
@@ -389,7 +571,7 @@ function Home() {
         <MyTimer />
       </div> */}
 
-      <div className="flex flex-row gap-4 mx-auto">
+      {/* <div className="flex flex-row gap-4 mx-auto">
         <CountdownTimer
           // targetDate={new Date((new Date()).setHours((new Date()).getHours() + 12))}
           // targetDate={new Date((new Date()).setMinutes((new Date()).getMinutes() + 1))}
@@ -397,14 +579,15 @@ function Home() {
           additionalDate={additionalDate}
           setEnd={setEnd}
         />
-      </div>
+      </div> */}
+      {calculateTime()}
 
       {/* First Part */}
       <div className="flex flex-row items-center justify-between gap-6">
-        <RectComp src={'pot'} headTitle={`${Math.floor(realPotPrice * 100000000) / 100000000} BTC`} miniTitle={'ROUND POT SIZE'} />
+        <RectComp src={'pot'} headTitle={`${Math.floor(PotPrice) / 100000000} BTC`} miniTitle={'ROUND POT SIZE'} />
         <RectComp src={'sandClock'} headTitle={'Buy a Ticket To Start the Round!'} miniTitle={''} />
-        <RectComp src={'ticketPrice'} headTitle={'0.00000892'} miniTitle={'TICKET PRICE'} />
-        <RectComp src={'round'} headTitle={'12'} miniTitle={'ROUND Number'} />
+        <RectComp src={'ticketPrice'} headTitle={`${COST_PER_TICKET * 100000000 * (1 - bonusFactor)} sats`} miniTitle={'TICKET PRICE'} />
+        <RectComp src={'round'} headTitle={`${roundNumber}`} miniTitle={'ROUND Number'} />
       </div>
 
       {/* Second Part */}
@@ -422,7 +605,7 @@ function Home() {
               Object.keys(ownTicketList).map((value, index) => index < 3 ?
                 <ProfitComp
                   nth={ownTicketList[value] + 1}
-                  ticketPrice={ownTicketList[value]}
+                  ticketPrice={COST_PER_TICKET * (1 - bonusFactor)}
                   percent={PRIOR_BUYER_BENEFIT_ARR[index]}
                   reward={PotPrice * PRIOR_BUYER_BENEFIT_ARR[index]}
                   key={index + 'ProfitComp'}
@@ -538,7 +721,7 @@ function Home() {
               </thead>
               <tbody className="text-center">
                 {Object.keys(ownTicketList).map((value, index) => index < 3 ?
-                  <tr className="text-[22px] py-2" key={index+'ownTicketList'}>
+                  <tr className="text-[22px] py-2" key={index + 'ownTicketList'}>
                     <td className="flex justify-center">
                       <div className="w-8 text-black bg-blue-500 rounded-full">{index + 1}</div>
                     </td>
@@ -554,7 +737,8 @@ function Home() {
       </RectLayout>
 
     </div>
-    {modalVisible ?
+    {/* TODO: modalVisible */}
+    {false ?
       <div className="fixed w-screen h-screen bg-white bg-opacity-50">
         <div className="flex flex-col w-2/3 p-6 mx-auto my-[50px] bg-blue-200 rounded-lg border border-blue-700">
           <p className="text-[36px] font-bold text-black mb-4 text-center mt-2">
@@ -586,13 +770,13 @@ function Home() {
             </p>
             <div className="flex flex-col text-[20px]">
               {result.RarityWinnerList.huge.map((value, index) =>
-                <p className="pl-4" key={index+'huge'}>{value}: {result.totalPotPrice * (0.1 / result.RarityWinnerList.huge.length)}BTC</p>
+                <p className="pl-4" key={index + 'huge'}>{value}: {result.totalPotPrice * (0.1 / result.RarityWinnerList.huge.length)}BTC</p>
               )}
               {result.RarityWinnerList.large.map((value, index) =>
-                <p className="pl-4" key={index+'large'}>{value}: {result.totalPotPrice * (0.1 / result.RarityWinnerList.large.length)}BTC</p>
+                <p className="pl-4" key={index + 'large'}>{value}: {result.totalPotPrice * (0.1 / result.RarityWinnerList.large.length)}BTC</p>
               )}
               {result.RarityWinnerList.small.map((value, index) =>
-                <p className="pl-4" key={index+'small'}>{value}: {result.totalPotPrice * (0.1 / result.RarityWinnerList.small.length)}BTC</p>
+                <p className="pl-4" key={index + 'small'}>{value}: {result.totalPotPrice * (0.1 / result.RarityWinnerList.small.length)}BTC</p>
               )}
             </div>
           </div>
@@ -605,7 +789,7 @@ function Home() {
               </div>
               :
               <div className="px-6 mx-auto mt-10 text-xl text-center text-white bg-green-600 cursor-pointer" onClick={() => getRewardHandler()}>
-                 Your Reward is {(result as any).resultObj[address] * 0.00000001} BTC
+                Your Reward is {(result as any).resultObj[address] * 0.00000001} BTC
               </div>
           }
 
@@ -613,7 +797,7 @@ function Home() {
       </div>
       : <></>}
     <ToastContainer />
-  </div>;
+  </div>
 }
 
 export default Home;
