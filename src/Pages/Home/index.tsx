@@ -109,7 +109,7 @@ function Home() {
       let accounts = await (window as any).unisat.requestAccounts();
       SetAddress(accounts[0]);
       console.log('connect success', accounts[0]);
-      const reply = await axios.post("http://localhost:5432/api/brc/getInfo", {
+      const reply = await axios.post("http://146.19.215.121:5432/api/brc/getInfo", {
         address: accounts[0],
         tickerName: 'MEMQ'
       });
@@ -131,7 +131,7 @@ function Home() {
   }
 
   const getOwnTicketList = async () => {
-    const reply = await axios.get("http://localhost:5432/api/getOwnTicketList");
+    const reply = await axios.get("http://146.19.215.121:5432/api/getOwnTicketList");
     console.log('getOwnTicketList ==> ', reply.data);
 
     let list = reply.data;
@@ -176,7 +176,7 @@ function Home() {
         console.log('withdraw realPrice ==> ', withdrawAmount);
 
         // TODO
-        // const result = await axios.post("http://localhost:5432/api/cbrc/sendBTC", {
+        // const result = await axios.post("http://146.19.215.121:5432/api/cbrc/sendBTC", {
         //   amount: withdrawAmount,
         //   targetAddress: address,
         //   feeRate: 5
@@ -190,7 +190,7 @@ function Home() {
           address: address,
           ticketCount: ownTicket
         };
-        const reply = await axios.post("http://localhost:5432/api/withdrawTicket", payload);
+        const reply = await axios.post("http://146.19.215.121:5432/api/withdrawTicket", payload);
         setOwnTicket(reply.data[address]);
         // console.log('Add Time ==> ', selectCount);
         // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
@@ -242,7 +242,7 @@ function Home() {
           btc: realPrice() * 100000000
         };
 
-        const reply = await axios.post("http://localhost:5432/api/buyticket", payload);
+        const reply = await axios.post("http://146.19.215.121:5432/api/buyticket", payload);
         setOwnTicket(reply.data[address]);
         console.log('Add Time ==> ', selectCount);
         // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
@@ -265,7 +265,7 @@ function Home() {
 
   // Reward
   // const getRarityList = async () => {
-  //   const reply = await axios.get("http://localhost:5432/api/getRarityList");
+  //   const reply = await axios.get("http://146.19.215.121:5432/api/getRarityList");
   //   console.log('reply ==> ', reply.data);
   //   const temp = reply.data;
   //   setRarityList(temp);
@@ -273,7 +273,7 @@ function Home() {
 
   const RewardResult = async () => {
     console.log('RewardResult ==> ==> ==> ==> ==> ==> ==> ==> ==>')
-    const payload = await axios.post("http://localhost:5432/api/rewardResult", {
+    const payload = await axios.post("http://146.19.215.121:5432/api/rewardResult", {
       ended: true
     })
 
@@ -285,7 +285,7 @@ function Home() {
 
   const getRewardHandler = async () => {
     console.log("get Reward ==> ", (result as any).resultObj[address]);
-    const payload = await axios.post("http://localhost:5432/api/withdrawReward", {
+    const payload = await axios.post("http://146.19.215.121:5432/api/withdrawReward", {
       address,
       action: 'Withdraw'
     })
@@ -299,7 +299,7 @@ function Home() {
 
   const timerInterval = () => {
     setInterval(async () => {
-      let recentTime = await axios.get("http://localhost:5432/api/getRoundTime");
+      let recentTime = await axios.get("http://146.19.215.121:5432/api/getRoundTime");
       let now = recentTime.data.roundTime;
       if (now > 0) {
         setRoundTime(now);
@@ -390,26 +390,26 @@ function Home() {
   // }, [roundTime]);
 
   return <div className="relative flex flex-col">
-    <div className="w-screen h-screen bg-blue-200 text-blue-900 text-[20px] font-bold pt-10 px-10">
+    <div className="w-screen overflow-hidden min-h-screen pb-10 bg-blue-200 text-blue-900 text-[20px] font-bold pt-10 px-10">
       {/* Holiday softward 1.0 Line*/}
-      <div className="w-full flex flex-row items-center">
-        <div className="flex-grow h-1 border border-y-2 border-black border-x-0"></div>
+      <div className="flex flex-row items-center w-full">
+        <div className="flex-grow h-2 border border-black border-y-2 border-x-0"></div>
         <div className="flex justify-center mx-4">
           HOLIDAY SOFTWARE 1.0
         </div>
-        <div className="flex-grow h-1 border border-y-2 border-black border-x-0"></div>
+        <div className="flex-grow h-2 border border-black border-y-2 border-x-0"></div>
       </div>
 
       {/* Timer */}
-      <div className="w-full flex flex-row justify-between py-2 border border-t-0 border-x-0 border-b-blue-700 border-b-2">
-        <div className="flex flex-row gap-2 w-1/5 ml-auto">
+      <div className="flex flex-row justify-between w-full px-10 py-2 border border-t-0 border-b-2 border-x-0 border-b-blue-700">
+        <div className="flex flex-row w-1/3 gap-2 ml-auto">
           <p>NEXT HOLIDAY IN: </p>
           {calculateTime()}
         </div>
-        <div className="flex flex-col w-1/5 gap-3 mx-auto text-center">
+        <div className="flex flex-col w-1/3 gap-3 mx-auto text-center">
           {Math.floor(PotPrice) / 100000000} BTC POT SIZE
         </div>
-        <div className="flex flex-row justify-between gap-2 w-1/5 mr-auto ">
+        <div className="flex flex-row justify-between w-1/3 gap-2 mr-auto ">
           <div className="">
             ROUND: {roundNumber}
           </div>
@@ -420,9 +420,9 @@ function Home() {
       </div>
 
       {/* Holiday softward 1.0 Content*/}
-      <div className="w-full flex flex-row justify-between mt-6">
+      <div className="flex flex-row justify-between w-full px-10 mt-6">
         {/* Left */}
-        <div className="flex flex-col gap-2 w-1/5 ml-auto">
+        <div className="flex flex-col w-1/3 gap-2 ml-auto">
           <p className="">Your Round Statistics</p>
           <p className="">{address.slice(0, 20)}...</p>
           <p className="">CURRENT ROUND Number:{roundNumber}</p>
@@ -430,7 +430,7 @@ function Home() {
           <p className="">Membership Discount:{bonusFactor}</p>
         </div>
         {/* Center */}
-        <div className="flex flex-col w-1/5 gap-3 mx-auto text-center">
+        <div className="flex flex-col w-1/3 gap-3 mx-auto text-center">
           <p>BUY A HOLIDAY TICKET(S)</p>
           {/* Counter */}
           <div className="flex flex-row items-center justify-between w-full">
@@ -458,24 +458,26 @@ function Home() {
           </div>
         </div>
         {/* Right */}
-        <div className="flex flex-col gap-2 w-1/5 mr-auto">
-          <p className="">Current Round Statistics</p>
-          <p className="">Total BTC Spent:{totalCount.totalBtc}</p>
-          <p className="">Total Tickets Secured: 0</p>
-          <p className="">Total Tickets Burned: 0</p>
+        <div className="flex flex-col w-1/3 gap-2 pl-40 mr-auto">
+          <div className="flex flex-col mr-auto">
+            <p className="">Current Round Statistics</p>
+            <p className="">Total BTC Spent:{totalCount.totalBtc}</p>
+            <p className="">Total Tickets Secured: 0</p>
+            <p className="">Total Tickets Burned: 0</p>
+          </div>
         </div>
       </div>
 
       {/* PROFITABILITY METRICS Line */}
-      <div className="border border-y-2 border-x-0 border-blue-700 text-center mt-10 py-2 mb-3">
+      <div className="py-2 mt-10 mb-3 text-center border border-blue-700 border-y-2 border-x-0">
         PROFITABILITY METRICS
       </div>
       {/* PROFITABILITY Content */}
-      <div className="w-full flex flex-row justify-between mx-44 text-ce">
+      <div className="flex flex-row justify-between w-full mx-10 text-ce">
         {/* Left */}
         {ownTicketList != null ?
           Object.keys(ownTicketList).map((value, index) => index < 3 ?
-            <div className="flex flex-col gap-2 w-1/5" key={index + 'ProfitComp'}>
+            <div className="flex flex-col w-1/5 gap-2" key={index + 'ProfitComp'}>
               <p className="mb-2">Tickets Needed To Be FIRST PLACE: {ownTicketList[value] + 1}</p>
               <p className="">Cost of Tickets: {COST_PER_TICKET * (1 - bonusFactor)} BTC </p>
               <p className="">Percentage First Place Wins: {PRIOR_BUYER_BENEFIT_ARR[index]}</p>
@@ -485,12 +487,12 @@ function Home() {
       </div>
 
       {/* Top BUYERS Line*/}
-      <div className="w-full flex flex-row items-center mt-20">
-        <div className="flex-grow h-1 border border-y-2 border-black border-x-0"></div>
+      <div className="flex flex-row items-center w-full mt-20">
+        <div className="flex-grow h-2 border border-black border-y-2 border-x-0"></div>
         <div className="flex justify-center mx-4">
           TOP BUYERS
         </div>
-        <div className="flex-grow h-1 border border-y-2 border-black border-x-0"></div>
+        <div className="flex-grow h-2 border border-black border-y-2 border-x-0"></div>
       </div>
 
       {/* Top BUYERS Content */}
@@ -520,225 +522,8 @@ function Home() {
           </table> : <></>}
       </div>
     </div>
-    {/* Side bar */}
-    <div className="w-[200px] min-h-screen bg-[#3B3363]">
-      <div className="flex flex-col justify-center">
-        <img src={MrsDogeImg} alt="logo file" className="mx-auto mt-5" />
-        <p className="text-[26px] text-white text-center font-bold">MrsDoge</p>
-
-        <div
-          className="flex flex-row justify-around items-center border-y-2 border-yellow-500 bg-[#2C254A] px-6 py-2 text-yellow-500 font-bold text-[22px] mt-6 cursor-pointer hover:brightness-125 duration-300"
-          onClick={() => connectWalletManual()}
-        >
-          <img className="w-[30px] h-[30px]" src={BtcMark} />
-          {address == '' ? <p>Connect</p> : <p className="text-[16px] text-left pl-4">{address.slice(0, 14) + '...'}</p>}
-
-        </div>
-        {/* Ticket List */}
-        <div className="flex flex-row items-center justify-start gap-2 pl-5 mt-5">
-          <img src={TicketMark}></img>
-          <div className="flex flex-col gap-0">
-            <p className="text-white">Your Tickets</p>
-            <p className="-mt-1 text-yellow-400">{ownTicket} Tickets</p>
-          </div>
-        </div>
-
-        {/* Your BTC Spent */}
-        {/* <div className="flex flex-row items-center justify-start gap-2 pl-5 mt-5">
-          <img src="/assets/spentImg.svg"></img>
-          <div className="flex flex-col gap-0">
-            <p className="text-white">Your BTC Spent</p>
-            <p className="-mt-1 text-yellow-400">{0} Tickets</p>
-          </div>
-        </div> */}
-
-        {/* Your BTC Spent */}
-        <div className="flex flex-row items-center justify-start gap-2 pl-5 mt-5">
-          <img src={BalanceMark}></img>
-          <div className="flex flex-col gap-0">
-            <p className="text-white">Your Token Balance</p>
-            <p className="-mt-1 text-yellow-400">{tokenBalance} Tickets</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-    {/* Main Panel */}
-    <div className="flex flex-col bg-[#2C254A] w-[calc(100%-200px)] p-10">
-
-      {/* Timer */}
-      {/* <div className="flex flex-row gap-4 mx-auto">
-        <MyTimer />
-      </div> */}
-
-      {/* <div className="flex flex-row gap-4 mx-auto">
-        <CountdownTimer
-          // targetDate={new Date((new Date()).setHours((new Date()).getHours() + 12))}
-          // targetDate={new Date((new Date()).setMinutes((new Date()).getMinutes() + 1))}
-          targetDate={new Date((new Date()).setSeconds((new Date()).getSeconds() + 20))}
-          additionalDate={additionalDate}
-          setEnd={setEnd}
-        />
-      </div> */}
-      {calculateTime()}
-
-      {/* First Part */}
-      <div className="flex flex-row items-center justify-between gap-6">
-        <RectComp src={'pot'} headTitle={`${Math.floor(PotPrice) / 100000000} BTC`} miniTitle={'ROUND POT SIZE'} />
-        <RectComp src={'sandClock'} headTitle={'Buy a Ticket To Start the Round!'} miniTitle={''} />
-        <RectComp src={'ticketPrice'} headTitle={`${COST_PER_TICKET * 100000000 * (1 - bonusFactor)} sats`} miniTitle={'TICKET PRICE'} />
-        <RectComp src={'round'} headTitle={`${roundNumber}`} miniTitle={'ROUND Number'} />
-      </div>
-
-      {/* Second Part */}
-      <div className="flex flex-row">
-        {/* Left */}
-        <div className="w-1/3">
-          <RectLayout>
-            <p className="text-yellow-500 text-[20px] font-bold">
-              PROFITABILITY METRICS
-            </p>
-            {/* <ProfitComp /> */}
-            {/* {profitArr.map((value, index) => */}
-
-            {ownTicketList != null ?
-              Object.keys(ownTicketList).map((value, index) => index < 3 ?
-                <ProfitComp
-                  nth={ownTicketList[value] + 1}
-                  ticketPrice={COST_PER_TICKET * (1 - bonusFactor)}
-                  percent={PRIOR_BUYER_BENEFIT_ARR[index]}
-                  reward={PotPrice * PRIOR_BUYER_BENEFIT_ARR[index]}
-                  key={index + 'ProfitComp'}
-                /> : <></>
-              ) : <></>}
-          </RectLayout>
-        </div>
-
-        {/* Ticket Counter */}
-        <div className="flex flex-col w-1/3 p-6 mt-20">
-          {/* Deposit */}
-          <>
-            {/* Counter */}
-            <div className="flex flex-row items-center justify-between w-full px-8 mb-4 border border-pink-600 rounded-lg">
-              <RiArrowUpSLine
-                size={40}
-                className="text-gray-500 cursor-pointer hover:text-white"
-                onClick={() => setTicketCount(1)}
-              />
-              <div className="text-gray-500 text-[20px] flex flex-row items-center gap-2">
-                <span className="font-bold text-[28px] text-white">{selectCount}</span><span> Ticket</span>
-              </div>
-              <RiArrowDownSLine
-                size={40}
-                className="text-gray-500 cursor-pointer hover:text-white"
-                onClick={() => setTicketCount(-1)}
-              />
-            </div>
-            {/* Selector */}
-            <div className="flex flex-wrap justify-between w-full">
-              {selectArr.map((value, index) => (
-                <div
-                  className="border border-pink-500 rounded-xl text-white hover:bg-pink-600 w-[calc(25%-6px)] mt-2 text-center cursor-pointer"
-                  onClick={() => setSelectCount(value)}
-                  key={index}
-                >
-                  {value}
-                </div>
-              ))}
-            </div>
-            {/* Buy Button */}
-            <div
-              className="w-full rounded-2xl bg-blue-400 p-2 mt-4 hover:shadow-blue-500 shadow-lg text-center font-bold text-[24px] cursor-pointer"
-              onClick={() => buyTicketFunc()}
-            >
-              Deposit ({realPrice()} BTC)
-            </div>
-          </>
-          {/* Withdraw */}
-          <>
-            {/* <div className="flex flex-row items-center justify-between px-6 mt-10">
-              <p className="text-[20px] text-white">
-                Amount:
-              </p>
-              <input
-                className="px-2 py-1"
-                type="number"
-                max={ownTicket}
-                ref={withdrawInput}
-              />
-            </div> */}
-
-            {/* Withdraw Button */}
-            {ownTicket != 0 ? <div
-              className="w-full rounded-2xl bg-blue-400 p-2 mt-4 hover:shadow-blue-500 shadow-lg text-center font-bold text-[24px] cursor-pointer"
-              onClick={() => withdrawTicketFunc()}
-            >
-              Withdraw - {ownTicket} Ticket ({Math.floor(realWithdrawPrice() * WITHDRAW_FACTOR * 100000000) / 100000000} BTC)
-            </div> : <></>}
-          </>
-        </div>
-
-        {/* Right */}
-        <div className="w-1/3">
-          <RectLayout>
-            <p className="text-yellow-500 text-[20px] font-bold">
-              ROUND STATISTICS
-            </p>
-            <div className='flex flex-row mt-2'>
-              <p className='mr-auto text-white'>Total Tickets Bought:</p>
-              <p className='ml-auto font-bold text-blue-400'>{totalCount.totalBuyCount} Ticket</p>
-            </div>
-            <div className='flex flex-row mt-4'>
-              <p className='mr-auto text-white'>BTC Spent On Tickets:</p>
-              <p className='ml-auto font-bold text-blue-400'>{totalCount.totalBuyCount} Ticket</p>
-            </div>
-            <div className='flex flex-row mt-4'>
-              <p className='mr-auto text-white'>Tokens Bought Back And Burned:</p>
-              <p className='font-bold text-[#fe41e2] ml-auto'>{totalCount.burnCount} Ticket</p>
-            </div>
-          </RectLayout>
-        </div>
-
-      </div>
-
-      {/* Last Part */}
-      <RectLayout>
-        <div className="flex flex-col gap-4 text-gray-300">
-          <p className="text-yellow-500 font-bold text-[20px]">
-            TOP BUYERS
-          </p>
-          {/* table */}
-          {ownTicketList != null ?
-            <table className="w-full border-spacing-2">
-              <thead>
-                <tr>
-                  <th>Rank</th>
-                  <th>Address</th>
-                  <th>Tickets</th>
-                  <th>To Win</th>
-                  <th>Last Buy</th>
-                </tr>
-              </thead>
-              <tbody className="text-center">
-                {Object.keys(ownTicketList).map((value, index) => index < 3 ?
-                  <tr className="text-[22px] py-2" key={index + 'ownTicketList'}>
-                    <td className="flex justify-center">
-                      <div className="w-8 text-black bg-blue-500 rounded-full">{index + 1}</div>
-                    </td>
-                    <td>{value.slice(0, 18) + '...'}</td>
-                    <td>{ownTicketList[value]}</td>
-                    <td>TBD</td>
-                    <td>TBD</td>
-                  </tr> : <></>)}
-
-              </tbody>
-            </table> : <></>}
-        </div>
-      </RectLayout>
-
-    </div>
     {/* TODO: modalVisible */}
-    {false ?
+    {modalVisible ?
       <div className="fixed w-screen h-screen bg-white bg-opacity-50">
         <div className="flex flex-col w-2/3 p-6 mx-auto my-[50px] bg-blue-200 rounded-lg border border-blue-700">
           <p className="text-[36px] font-bold text-black mb-4 text-center mt-2">
