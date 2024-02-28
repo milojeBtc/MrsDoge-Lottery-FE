@@ -1,27 +1,15 @@
-import { useEffect, useState, useRef } from "react";
-
-import MrsDogeImg from '../../assets/logo.png'
-import BtcMark from '../../assets/metamask.png'
-import TicketMark from '../../assets/ticketImg.svg'
-import BalanceMark from '../../assets/spentImg.svg'
+import { useEffect, useState } from "react";
 
 import axios from 'axios'
-
-import ProfitComp from "../../Components/ProfitComp";
-import RectComp from "../../Components/RectComp";
-import RectLayout from "../../Components/rectLayout";
 // import CountdownTimer from "../../Components/CountdownTimer";
 
-import { RiArrowUpSLine, RiArrowDownSLine } from "react-icons/ri";
 import { ToastContainer, toast } from 'react-toastify';
 
 import {
   PRIOR_BUYER_BENEFIT_ARR,
   COST_PER_TICKET,
-  INITIAL_POT_PRICE,
   TREASURE_WALLET_ADDRESS,
   WITHDRAW_FACTOR,
-  HOLDER_RARITY_THREHOLD
 } from "../../Constants";
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -50,7 +38,7 @@ function Home() {
     burnCount: 0
   }
 
-  const selectArr = [500, 200, 100, 50, 20, 10, 5, 1];
+  const nthTitle = ['First', 'Second', 'Third']
 
   // Set State
 
@@ -67,6 +55,7 @@ function Home() {
   const [rarityList, setRarityList] = useState(null);
 
   const [roundNumber, setRoundNumber] = useState(null);
+  const [totalTicket ,setTotalTicket] = useState(0);
 
   // useRef
   // const withdrawInput = useRef(null);
@@ -109,7 +98,7 @@ function Home() {
       let accounts = await (window as any).unisat.requestAccounts();
       SetAddress(accounts[0]);
       console.log('connect success', accounts[0]);
-      const reply = await axios.post("http://146.19.215.121:5432/api/brc/getInfo", {
+      const reply = await axios.post("http://localhost:5432/api/brc/getInfo", {
         address: accounts[0],
         tickerName: 'MEMQ'
       });
@@ -131,7 +120,7 @@ function Home() {
   }
 
   const getOwnTicketList = async () => {
-    const reply = await axios.get("http://146.19.215.121:5432/api/getOwnTicketList");
+    const reply = await axios.get("http://localhost:5432/api/getOwnTicketList");
     console.log('getOwnTicketList ==> ', reply.data);
 
     let list = reply.data;
@@ -176,7 +165,7 @@ function Home() {
         console.log('withdraw realPrice ==> ', withdrawAmount);
 
         // TODO
-        // const result = await axios.post("http://146.19.215.121:5432/api/cbrc/sendBTC", {
+        // const result = await axios.post("http://localhost:5432/api/cbrc/sendBTC", {
         //   amount: withdrawAmount,
         //   targetAddress: address,
         //   feeRate: 5
@@ -190,7 +179,7 @@ function Home() {
           address: address,
           ticketCount: ownTicket
         };
-        const reply = await axios.post("http://146.19.215.121:5432/api/withdrawTicket", payload);
+        const reply = await axios.post("http://localhost:5432/api/withdrawTicket", payload);
         setOwnTicket(reply.data[address]);
         // console.log('Add Time ==> ', selectCount);
         // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
@@ -242,7 +231,7 @@ function Home() {
           btc: realPrice() * 100000000
         };
 
-        const reply = await axios.post("http://146.19.215.121:5432/api/buyticket", payload);
+        const reply = await axios.post("http://localhost:5432/api/buyticket", payload);
         setOwnTicket(reply.data[address]);
         console.log('Add Time ==> ', selectCount);
         // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
@@ -265,7 +254,7 @@ function Home() {
 
   // Reward
   // const getRarityList = async () => {
-  //   const reply = await axios.get("http://146.19.215.121:5432/api/getRarityList");
+  //   const reply = await axios.get("http://localhost:5432/api/getRarityList");
   //   console.log('reply ==> ', reply.data);
   //   const temp = reply.data;
   //   setRarityList(temp);
@@ -273,7 +262,7 @@ function Home() {
 
   const RewardResult = async () => {
     console.log('RewardResult ==> ==> ==> ==> ==> ==> ==> ==> ==>')
-    const payload = await axios.post("http://146.19.215.121:5432/api/rewardResult", {
+    const payload = await axios.post("http://localhost:5432/api/rewardResult", {
       ended: true
     })
 
@@ -285,7 +274,7 @@ function Home() {
 
   const getRewardHandler = async () => {
     console.log("get Reward ==> ", (result as any).resultObj[address]);
-    const payload = await axios.post("http://146.19.215.121:5432/api/withdrawReward", {
+    const payload = await axios.post("http://localhost:5432/api/withdrawReward", {
       address,
       action: 'Withdraw'
     })
@@ -299,7 +288,7 @@ function Home() {
 
   const timerInterval = () => {
     setInterval(async () => {
-      let recentTime = await axios.get("http://146.19.215.121:5432/api/getRoundTime");
+      let recentTime = await axios.get("http://localhost:5432/api/getRoundTime");
       let now = recentTime.data.roundTime;
       if (now > 0) {
         setRoundTime(now);
@@ -321,6 +310,10 @@ function Home() {
       let totalPotPrice = recentTime.data.totalPotPrice;
       setPotPrice(totalPotPrice);
 
+      // Total Ticket Number
+      let totalTicketTemp = recentTime.data.totalTicket;
+      setTotalTicket(totalTicketTemp);
+
       // Set Round
       let roundNum = recentTime.data.roundNumber;
       setRoundNumber(roundNum);
@@ -334,7 +327,7 @@ function Home() {
 
     return (
       <div className="text-center">
-        {hour} hours {min} mins {sec} sec
+        {hour}H:<span>&nbsp;</span>{min}M:<span>&nbsp;</span>{sec}S
       </div>
     )
   }
@@ -389,98 +382,100 @@ function Home() {
   //   }
   // }, [roundTime]);
 
-  return <div className="relative flex flex-col">
-    <div className="w-screen overflow-hidden min-h-screen pb-10 bg-blue-200 text-blue-900 text-[20px] font-bold pt-10 px-10">
+  return <div className="relative flex flex-col main-font-style">
+    <div className="w-screen overflow-hidden min-h-screen bg-[url(/bg.png)] pb-10 text-blue-950 text-[18px] font-bold pt-10 min-[1080px]:px-32 max-[1080px]:px-10">
+      {/* Loading bar */}
+      <div className="w-full h-4 bg-blue-950 bg-opacity-80 mb-4"></div>
+      
       {/* Holiday softward 1.0 Line*/}
       <div className="flex flex-row items-center w-full">
-        <div className="flex-grow h-2 border border-black border-y-2 border-x-0"></div>
+        <div className="flex-grow h-[5px] border border-blue-950 border-y-2 border-x-0"></div>
         <div className="flex justify-center mx-4">
           HOLIDAY SOFTWARE 1.0
         </div>
-        <div className="flex-grow h-2 border border-black border-y-2 border-x-0"></div>
+        <div className="flex-grow h-[5px] border border-blue-950 border-y-2 border-x-0"></div>
       </div>
 
-      {/* Timer */}
-      <div className="flex flex-row justify-between w-full px-10 py-2 border border-t-0 border-b-2 border-x-0 border-b-blue-700">
-        <div className="flex flex-row w-1/3 gap-2 ml-auto">
-          <p>NEXT HOLIDAY IN: </p>
-          {calculateTime()}
+      {/* Holiday softward 1.0 Content* */}
+      <div className="flex min-[880px]:flex-row max-[880px]:flex-col justify-between w-full px-10 py-2 border border-t-0 border-b-2 border-x-0 border-b-blue-950">
+        <div className="flex min-[460px]:flex-row max-[460px]:flex-col min-[880px]:w-1/3 max-[880px]:w-full min-[880px]:ml-auto max-[880px]:justify-center gap-2">
+          <p className="text-center">NEXT HOLIDAY IN: </p> {calculateTime()}
         </div>
-        <div className="flex flex-col w-1/3 gap-3 mx-auto text-center">
+        <div className="flex flex-col min-[880px]:w-1/3 max-[880px]:w-full gap-3 mx-auto text-center">
           {Math.floor(PotPrice) / 100000000} BTC POT SIZE
         </div>
-        <div className="flex flex-row justify-between w-1/3 gap-2 mr-auto ">
+        <div className="flex flex-row justify-between min-[880px]:w-1/3 max-[880px]:w-full gap-2 mr-auto min-[880px]:pl-10 max-[880px]:px-0 ">
           <div className="">
             ROUND: {roundNumber}
           </div>
-          <div className="cursor-pointer">
-            [ CONNECT WALLET ]
+          <div className="cursor-pointer" onClick={() => connectWalletManual()}>
+            [ {address ? <>Connected</> : <>CONNECT WALLET</>} ]
           </div>
         </div>
       </div>
 
-      {/* Holiday softward 1.0 Content*/}
+      {/* Second part Content*/}
       <div className="flex flex-row justify-between w-full px-10 mt-6">
         {/* Left */}
-        <div className="flex flex-col w-1/3 gap-2 ml-auto">
+        <div className="flex flex-col w-1/3 gap-3 ml-auto">
           <p className="">Your Round Statistics</p>
-          <p className="">{address.slice(0, 20)}...</p>
+          <p className=""><span className="font-bold">&lt;</span> {address.slice(0, 20)}... <span>&gt;</span></p>
           <p className="">CURRENT ROUND Number:{roundNumber}</p>
-          <p className="">YOUR TICKETS for Current Round:{roundNumber}</p>
+          <p className="">YOUR TICKETS for Current Round:{ownTicket}</p>
           <p className="">Membership Discount:{bonusFactor}</p>
         </div>
         {/* Center */}
         <div className="flex flex-col w-1/3 gap-3 mx-auto text-center">
           <p>BUY A HOLIDAY TICKET(S)</p>
           {/* Counter */}
-          <div className="flex flex-row items-center justify-between w-full">
-            <RiArrowUpSLine
-              size={40}
-              className="text-gray-500 cursor-pointer hover:text-white"
-              onClick={() => setTicketCount(1)}
-            />
-            <div className="text-gray-500 text-[20px] flex flex-row items-center gap-2">
-              <span className="font-bold text-[28px] text-white">{selectCount}</span><span> Ticket</span>
-            </div>
-            <RiArrowDownSLine
-              size={40}
-              className="text-gray-500 cursor-pointer hover:text-white"
+          <div className="flex flex-row items-center justify-between w-1/2 mx-auto">
+            <div 
+              className="text-[30px] font-bold text-blue-950 cursor-pointer hover:text-white"
               onClick={() => setTicketCount(-1)}
-            />
+            >
+              <span>&lt;</span>
+            </div>
+            <div className="text-[24px] flex flex-row items-center gap-2 text-blue-950">
+              <span className="font-bold">{selectCount}</span><span> Ticket</span>
+            </div>
+            <div 
+              className="text-[30px] font-bold  text-blue-950 cursor-pointer hover:text-white"
+              onClick={() => setTicketCount(1)}
+            >
+              <span>&gt;</span>
+            </div>
           </div>
           {/* ticket price */}
-          <p className="">{COST_PER_TICKET * (1 - bonusFactor) * 100000000} sats per ticket</p>
+          <p className="text-[24px]">{COST_PER_TICKET * (1 - bonusFactor)} BTC per ticket</p>
           <div
-            className="w-full mt-4 hover:shadow-blue-500 text-center font-bold text-[24px] cursor-pointer border border-blue-400"
+            className="w-2/3 hover:shadow-blue-500 text-center font-bold text-[24px] cursor-pointer border border-blue-950 mx-auto"
             onClick={() => buyTicketFunc()}
           >
             {realPrice()} BTC
           </div>
         </div>
         {/* Right */}
-        <div className="flex flex-col w-1/3 gap-2 pl-40 mr-auto">
-          <div className="flex flex-col mr-auto">
+        <div className="flex flex-col w-1/3 gap-3 mr-auto pl-10">
             <p className="">Current Round Statistics</p>
+            <p className="">Total Round tickets purchased: {totalTicket}</p>
             <p className="">Total BTC Spent:{totalCount.totalBtc}</p>
-            <p className="">Total Tickets Secured: 0</p>
-            <p className="">Total Tickets Burned: 0</p>
-          </div>
         </div>
       </div>
 
       {/* PROFITABILITY METRICS Line */}
-      <div className="py-2 mt-10 mb-3 text-center border border-blue-700 border-y-2 border-x-0">
+      <div className="py-2 mt-10 mb-3 text-center border border-blue-950 border-y-2 border-x-0">
         PROFITABILITY METRICS
       </div>
+
       {/* PROFITABILITY Content */}
       <div className="flex flex-row justify-between w-full mx-10 text-ce">
         {/* Left */}
         {ownTicketList != null ?
           Object.keys(ownTicketList).map((value, index) => index < 3 ?
-            <div className="flex flex-col w-1/5 gap-2" key={index + 'ProfitComp'}>
-              <p className="mb-2">Tickets Needed To Be FIRST PLACE: {ownTicketList[value] + 1}</p>
+            <div className="flex flex-col w-1/3 gap-1" key={index + 'ProfitComp'}>
+              <p className="mb-4">Tickets Needed To Be {nthTitle[index]} PLACE: {ownTicketList[value] + 1}</p>
               <p className="">Cost of Tickets: {COST_PER_TICKET * (1 - bonusFactor)} BTC </p>
-              <p className="">Percentage First Place Wins: {PRIOR_BUYER_BENEFIT_ARR[index]}</p>
+              <p className="">Percentage {nthTitle[index]} Place Wins: {PRIOR_BUYER_BENEFIT_ARR[index]}</p>
               <p className="">Amount to be won: {PotPrice * PRIOR_BUYER_BENEFIT_ARR[index]} BTC</p>
             </div> : <></>
           ) : <></>}
@@ -488,19 +483,19 @@ function Home() {
 
       {/* Top BUYERS Line*/}
       <div className="flex flex-row items-center w-full mt-20">
-        <div className="flex-grow h-2 border border-black border-y-2 border-x-0"></div>
+        <div className="flex-grow h-2 border border-blue-950 border-y-2 border-x-0"></div>
         <div className="flex justify-center mx-4">
           TOP BUYERS
         </div>
-        <div className="flex-grow h-2 border border-black border-y-2 border-x-0"></div>
+        <div className="flex-grow h-2 border border-blue-950 border-y-2 border-x-0"></div>
       </div>
 
       {/* Top BUYERS Content */}
-      <div className="mx-24">
+      <div className="">
         {ownTicketList != null ?
           <table className="w-full border-spacing-2">
             <thead>
-              <tr>
+              <tr className="border border-b-blue-950 border-b-2 border-x-0 border-t-0">
                 <th>Rank</th>
                 <th>Address</th>
                 <th>Tickets</th>
@@ -511,11 +506,11 @@ function Home() {
               {Object.keys(ownTicketList).map((value, index) => index < 5 ?
                 <tr className="text-[22px] py-2" key={index + 'ownTicketList'}>
                   <td className="flex justify-center">
-                    <div className="w-8 text-black bg-blue-500 rounded-full">{index + 1}</div>
+                    <div className="">{Math.floor(index / 10)}{index + 1}</div>
                   </td>
                   <td>{value.slice(0, 18) + '...'}</td>
                   <td>{ownTicketList[value]}</td>
-                  <td>TBD</td>
+                  <td>0</td>
                 </tr> : <></>)}
 
             </tbody>

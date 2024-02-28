@@ -10,7 +10,7 @@ table td {
 .App {
     display: flex;
     justify-content: space-around;
-    font-family: sans-serif;
+    font-family: perfect_dos_vga_437;
     text-align: center;
     padding-top: 40px;
   }
@@ -18,3 +18,12 @@ table td {
   .time {
     font-size: 32px;
   }
+
+@font-face {
+  font-family: "perfect_dos_vga_437";
+  src: url("../font/perfect_dos_vga_437/Perfect\ DOS\ VGA\ 437.ttf") format("ttf"),
+}
+
+.main-font-style {
+  font-family: "perfect_dos_vga_437";
+}
