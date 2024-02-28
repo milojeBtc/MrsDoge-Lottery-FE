@@ -350,9 +350,9 @@ function Home() {
     let totalTime = 30 * totalTicket + 12 * 3600;
     let spendTime = totalTime - roundTime;
     console.log('spendTime ==> ', spendTime)
-    let percent = Math.floor((spendTime + 5000) / totalTime * 100);
+    let percent = Math.floor((spendTime) / totalTime * 100);
     setLoadingPercent(percent);
-    console.log("percent ==> ", `${spendTime + 5000} / ${totalTime} = ${percent}`);
+    console.log("percent ==> ", `${spendTime} / ${totalTime} = ${percent}`);
   }, [totalTicket])
 
   return <div className="relative flex flex-col main-font-style">
