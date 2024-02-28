@@ -57,6 +57,8 @@ function Home() {
   const [roundNumber, setRoundNumber] = useState(null);
   const [totalTicket ,setTotalTicket] = useState(0);
 
+  const [loadingPercent, setLoadingPercent] = useState(0);
+
   // useRef
   // const withdrawInput = useRef(null);
 
@@ -152,53 +154,38 @@ function Home() {
     return Math.floor(COST_PER_TICKET * (1 - bonusFactor) * selectCount * 100000000) / 100000000;
   }
 
-  const realWithdrawPrice = () => {
-    return Math.floor(COST_PER_TICKET * (1 - bonusFactor) * WITHDRAW_FACTOR * ownTicket * 100000000) / 100000000;
-  }
+  // const realWithdrawPrice = () => {
+  //   return Math.floor(COST_PER_TICKET * (1 - bonusFactor) * WITHDRAW_FACTOR * ownTicket * 100000000) / 100000000;
+  // }
 
-  const withdrawTicketFunc = async () => {
-    try {
-      if (address != '') {
-        let withdrawAmount = realWithdrawPrice() * WITHDRAW_FACTOR;
-        console.log('WITHDRAW_FACTOR ==> ', WITHDRAW_FACTOR)
-        console.log('realWithdrawPrice ==> ', realWithdrawPrice());
-        console.log('withdraw realPrice ==> ', withdrawAmount);
+  // const withdrawTicketFunc = async () => {
+  //   try {
+  //     if (address != '') {
 
-        // TODO
-        // const result = await axios.post("http://146.19.215.121:5432/api/cbrc/sendBTC", {
-        //   amount: withdrawAmount,
-        //   targetAddress: address,
-        //   feeRate: 5
-        // })
-        // toast.success("withdrawing is successfully!")
-        // console.log('withdraw success!! ==> ', result)
+  //       const payload = {
+  //         address: address,
+  //         ticketCount: ownTicket
+  //       };
+  //       const reply = await axios.post("http://146.19.215.121:5432/api/withdrawTicket", payload);
+  //       setOwnTicket(reply.data[address]);
+  //       // console.log('Add Time ==> ', selectCount);
+  //       // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
 
-        // 
+  //       await getOwnTicketList();
 
-        const payload = {
-          address: address,
-          ticketCount: ownTicket
-        };
-        const reply = await axios.post("http://146.19.215.121:5432/api/withdrawTicket", payload);
-        setOwnTicket(reply.data[address]);
-        // console.log('Add Time ==> ', selectCount);
-        // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
+  //       await calcRealPot()
 
-        await getOwnTicketList();
+  //       toast.success("Withdrawing Ticket successfully!")
 
-        await calcRealPot()
-
-        toast.success("Withdrawing Ticket successfully!")
-
-        console.log('reply => ', reply);
-      } else {
-        window.open("https://chromewebstore.google.com/detail/unisat-wallet/ppbibelpcjmhbdihakflkdcoccbgbkpo");
-      }
-    } catch (error) {
-      toast.error("Buying Ticket get error!")
-      console.log(error)
-    }
-  }
+  //       console.log('reply => ', reply);
+  //     } else {
+  //       window.open("https://chromewebstore.google.com/detail/unisat-wallet/ppbibelpcjmhbdihakflkdcoccbgbkpo");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Buying Ticket get error!")
+  //     console.log(error)
+  //   }
+  // }
 
   const giveReward = async () => {
     console.log('Total Pot Price ==>', realPotPrice);
@@ -247,18 +234,10 @@ function Home() {
         window.open("https://chromewebstore.google.com/detail/unisat-wallet/ppbibelpcjmhbdihakflkdcoccbgbkpo");
       }
     } catch (error) {
-      toast.error("Buying Ticket get error!")
+      toast.error("Please connect wallet first!")
       console.log(error)
     }
   }
-
-  // Reward
-  // const getRarityList = async () => {
-  //   const reply = await axios.get("http://146.19.215.121:5432/api/getRarityList");
-  //   console.log('reply ==> ', reply.data);
-  //   const temp = reply.data;
-  //   setRarityList(temp);
-  // }
 
   const RewardResult = async () => {
     console.log('RewardResult ==> ==> ==> ==> ==> ==> ==> ==> ==>')
@@ -367,11 +346,20 @@ function Home() {
     }
   }, [end])
 
+  useEffect(() => {
+    let totalTime = 30 * totalTicket + 12 * 3600;
+    let spendTime = totalTime - roundTime;
+    console.log('spendTime ==> ', spendTime)
+    let percent = Math.floor((spendTime + 5000) / totalTime * 100);
+    setLoadingPercent(percent);
+    console.log("percent ==> ", `${spendTime + 5000} / ${totalTime} = ${percent}`);
+  }, [totalTicket])
+
   return <div className="relative flex flex-col main-font-style">
     <div className="w-screen overflow-hidden min-h-screen bg-[url(/bg.png)] pb-10 text-blue-950 text-[18px] pt-10 min-[1080px]:px-32 max-[1080px]:px-10 max-[400px]:px-4">
       {/* Loading bar */}
       <div className="relative w-full h-4 mb-4 bg-blue-950 bg-opacity-80">
-        <div className="absolute w-2/3 h-full bg-white bg-opacity-80">
+        <div className={`absolute h-full bg-white bg-repeat-x border border-white bg-opacity-80`}style={{width:`${loadingPercent}%`}}>
 
         </div>
       </div>
