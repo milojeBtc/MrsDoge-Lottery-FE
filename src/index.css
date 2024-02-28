@@ -20,10 +20,10 @@ table td {
   }
 
 @font-face {
-  font-family: "perfect_dos_vga_437";
-  src: url("../font/perfect_dos_vga_437/Perfect\ DOS\ VGA\ 437.ttf") format("ttf"),
+  font-family: "Perfect DOS VGA 437 Font";
+  src: url("../public/font/perfect_dos_vga_437/Perfect\ DOS\ VGA\ 437.ttf") format("truetype"),
 }
 
 .main-font-style {
-  font-family: "perfect_dos_vga_437";
+  font-family: "Perfect DOS VGA 437 Font";
 }

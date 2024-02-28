@@ -331,7 +331,7 @@ function Home() {
 
     return (
       <div className="text-center">
-        {hour}H:<span>&nbsp;</span>{min}M:<span>&nbsp;</span>{sec}S
+        {hour}H: {min}M: {sec}S
       </div>
     )
   }
@@ -368,9 +368,9 @@ function Home() {
   }, [end])
 
   return <div className="relative flex flex-col main-font-style">
-    <div className="w-screen overflow-hidden min-h-screen bg-[url(/bg.png)] pb-10 text-blue-950 text-[18px] font-bold pt-10 min-[1080px]:px-32 max-[1080px]:px-10 max-[400px]:px-4">
+    <div className="w-screen overflow-hidden min-h-screen bg-[url(/bg.png)] pb-10 text-blue-950 text-[18px] pt-10 min-[1080px]:px-32 max-[1080px]:px-10 max-[400px]:px-4">
       {/* Loading bar */}
-      <div className="w-full h-4 bg-blue-950 bg-opacity-80 mb-4"></div>
+      <div className="w-full h-4 mb-4 bg-blue-950 bg-opacity-80"></div>
       
       {/* Holiday softward 1.0 Line*/}
       <div className="flex flex-row items-center w-full">
@@ -480,7 +480,7 @@ function Home() {
         {ownTicketList != null ?
           <table className="w-full border-spacing-2">
             <thead>
-              <tr className="border border-b-blue-950 border-b-2 border-x-0 border-t-0">
+              <tr className="border border-t-0 border-b-2 border-b-blue-950 border-x-0">
                 <th>Rank</th>
                 <th>Address</th>
                 <th>Tickets</th>
