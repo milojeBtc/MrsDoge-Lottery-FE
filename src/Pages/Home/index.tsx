@@ -101,7 +101,7 @@ function Home() {
       let accounts = await (window as any).unisat.requestAccounts();
       SetAddress(accounts[0]);
       console.log('connect success', accounts[0]);
-      const reply = await axios.post("http://localhost:5432/api/brc/getInfo", {
+      const reply = await axios.post("http://146.19.215.121:5432/api/brc/getInfo", {
         address: accounts[0],
         tickerName: 'MEMQ'
       });
@@ -123,7 +123,7 @@ function Home() {
   }
 
   const getOwnTicketList = async () => {
-    const reply = await axios.get("http://localhost:5432/api/getOwnTicketList");
+    const reply = await axios.get("http://146.19.215.121:5432/api/getOwnTicketList");
     console.log('getOwnTicketList ==> ', reply.data);
 
     let list = reply.data;
@@ -136,7 +136,7 @@ function Home() {
 
     console.log('address ===>', address)
 
-    toast.success("loading data is successfully!")
+    // toast.success("loading data is successfully!")
 
     if (address != '') setOwnTicket(reply.data[address]);
   }
@@ -167,7 +167,7 @@ function Home() {
   //         address: address,
   //         ticketCount: ownTicket
   //       };
-  //       const reply = await axios.post("http://localhost:5432/api/withdrawTicket", payload);
+  //       const reply = await axios.post("http://146.19.215.121:5432/api/withdrawTicket", payload);
   //       setOwnTicket(reply.data[address]);
   //       // console.log('Add Time ==> ', selectCount);
   //       // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
@@ -219,10 +219,14 @@ function Home() {
           btc: realPrice() * 100000000
         };
 
-        const reply = await axios.post("http://localhost:5432/api/buyticket", payload);
+        const reply = await axios.post("http://146.19.215.121:5432/api/buyticket", payload);
         setOwnTicket(reply.data[address]);
         console.log('Add Time ==> ', selectCount);
         // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
+
+        toast.info("Purchased ticket, Order is processing")
+
+        await delay(2000);
 
         await getOwnTicketList();
 
@@ -242,7 +246,7 @@ function Home() {
 
   const RewardResult = async () => {
     console.log('RewardResult ==> ==> ==> ==> ==> ==> ==> ==> ==>')
-    const payload = await axios.post("http://localhost:5432/api/rewardResult", {
+    const payload = await axios.post("http://146.19.215.121:5432/api/rewardResult", {
       ended: true
     })
 
@@ -255,7 +259,7 @@ function Home() {
   const getRewardHandler = async () => {
     try {
       console.log("get Reward ==> ", (result as any).resultObj[address]);
-      const payload = await axios.post("http://localhost:5432/api/withdrawReward", {
+      const payload = await axios.post("http://146.19.215.121:5432/api/withdrawReward", {
         address,
         action: 'Withdraw'
       })
@@ -274,7 +278,7 @@ function Home() {
 
   const timerInterval = () => {
     setInterval(async () => {
-      let recentTime = await axios.get("http://localhost:5432/api/getRoundTime");
+      let recentTime = await axios.get("http://146.19.215.121:5432/api/getRoundTime");
       let now = recentTime.data.roundTime;
       if (now > 0) {
         setRoundTime(now);
@@ -361,6 +365,8 @@ function Home() {
     setLoadingPercent(percent);
     console.log("percent ==> ", `${spendTime} / ${totalTime} = ${percent}`);
   }, [totalTicket])
+
+  const delay = (ms:number) => new Promise((res) => setTimeout(res, ms));
 
   return <div className="relative flex flex-col main-font-style">
     <div className="w-screen overflow-hidden min-h-screen bg-[url(/bg.png)] pb-10 text-blue-950 text-[20px] pt-10 min-[1080px]:px-32 max-[1080px]:px-10 max-[400px]:px-4">
@@ -518,10 +524,10 @@ function Home() {
         <div className="min-[700px]:px-10 max-[700px]:px-2 text-left">
           {/* What is the Mrs Doge game */}
           <div className="py-2 mt-10 mb-3 text-center border border-blue-950 border-y-2 border-x-0">
-            What is the Mrs Doge game
-          </div>
+          What is Holiday Software 1.0? 
+</div>
 
-          <p className="">Our raffle provide </p>
+          <p className="">Holiday software is a lottery game built on Bitcoin </p>
 
           {/* What is the Mrs Doge game */}
           <div className="py-2 mt-10 mb-3 text-center border border-blue-950 border-y-2 border-x-0">
