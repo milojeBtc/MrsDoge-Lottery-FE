@@ -55,7 +55,7 @@ function Home() {
   const [rarityList, setRarityList] = useState(null);
 
   const [roundNumber, setRoundNumber] = useState(null);
-  const [totalTicket ,setTotalTicket] = useState(0);
+  const [totalTicket, setTotalTicket] = useState(0);
 
   const [loadingPercent, setLoadingPercent] = useState(0);
 
@@ -85,6 +85,7 @@ function Home() {
   });
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [faqModal, setFaqModal] = useState(false);
 
   // Define function
 
@@ -252,17 +253,23 @@ function Home() {
   }
 
   const getRewardHandler = async () => {
-    console.log("get Reward ==> ", (result as any).resultObj[address]);
-    const payload = await axios.post("http://localhost:5432/api/withdrawReward", {
-      address,
-      action: 'Withdraw'
-    })
+    try {
+      console.log("get Reward ==> ", (result as any).resultObj[address]);
+      const payload = await axios.post("http://localhost:5432/api/withdrawReward", {
+        address,
+        action: 'Withdraw'
+      })
 
-    const temp = payload.data;
+      const temp = payload.data;
 
-    console.log('Updated result ==> ', temp);
+      console.log('Updated result ==> ', temp);
 
-    setResult(temp);
+      toast.success('Getting Reward successfully!');
+
+      setResult(temp);
+    } catch (error) {
+      toast.success('try again a few minutes later!');
+    }
   }
 
   const timerInterval = () => {
@@ -359,11 +366,11 @@ function Home() {
     <div className="w-screen overflow-hidden min-h-screen bg-[url(/bg.png)] pb-10 text-blue-950 text-[20px] pt-10 min-[1080px]:px-32 max-[1080px]:px-10 max-[400px]:px-4">
       {/* Loading bar */}
       <div className="relative w-full h-4 mb-4 bg-blue-950 bg-opacity-80">
-        <div className={`absolute h-full bg-white bg-repeat-x border border-white bg-opacity-80`}style={{width:`${loadingPercent}%`}}>
+        <div className={`absolute h-full bg-white bg-repeat-x border border-white bg-opacity-80`} style={{ width: `${loadingPercent}%` }}>
 
         </div>
       </div>
-      
+
       {/* Holiday softward 1.0 Line*/}
       <div className="flex flex-row items-center w-full">
         <div className="flex-grow h-[5px] border border-blue-950 border-y-2 border-x-0"></div>
@@ -406,7 +413,7 @@ function Home() {
           <p>BUY A HOLIDAY TICKET(S)</p>
           {/* Counter */}
           <div className="flex flex-row items-center justify-between w-full mx-auto">
-            <div 
+            <div
               className="text-[30px] font-bold text-blue-950 cursor-pointer hover:text-white"
               onClick={() => setTicketCount(-1)}
             >
@@ -415,7 +422,7 @@ function Home() {
             <div className="text-[20px] flex flex-row items-center gap-2 text-blue-950">
               <span className="font-bold">{selectCount}</span><span> Ticket</span>
             </div>
-            <div 
+            <div
               className="text-[30px] font-bold  text-blue-950 cursor-pointer hover:text-white"
               onClick={() => setTicketCount(1)}
             >
@@ -433,9 +440,10 @@ function Home() {
         </div>
         {/* Right */}
         <div className="flex flex-col min-[880px]:w-1/3 max-[880px]:w-full gap-3 min-[880px]:mr-auto max-[880px]:mx-auto min-[880px]:pl-10 max-[880px]:pl-0">
-            <p className="">Current Round Statistics</p>
-            <p className="">Total Round tickets purchased: {totalTicket}</p>
-            <p className="">Total BTC Spent:{totalCount.totalBtc}</p>
+          <p className="">Current Round Statistics</p>
+          <p className="">Total Round tickets purchased: {totalTicket}</p>
+          <p className="">Total BTC Spent:{totalCount.totalBtc}</p>
+          <p className="">Your token balance:{tokenBalance}</p>
         </div>
       </div>
 
@@ -453,9 +461,9 @@ function Home() {
               <p className="mb-4">Tickets Needed To Be {nthTitle[index]} PLACE: {ownTicketList[value] + 1}</p>
               <p className="">Cost of Tickets: {COST_PER_TICKET * (1 - bonusFactor)} BTC </p>
               <p className="">Percentage {nthTitle[index]} Place Wins: {PRIOR_BUYER_BENEFIT_ARR[index]}</p>
-              <p className="">Amount to be won: {PotPrice * PRIOR_BUYER_BENEFIT_ARR[index]} BTC</p>
+              <p className="">Amount to be won: {PotPrice * PRIOR_BUYER_BENEFIT_ARR[index] / 100000000} BTC</p>
             </div> : <></>
-          ) : <></>}
+          ) : <>There is no data yet...</>}
       </div>
 
       {/* Top BUYERS Line*/}
@@ -492,13 +500,77 @@ function Home() {
                 </tr> : <></>)}
 
             </tbody>
-          </table> : <></>}
+          </table> : <>There is no data yet...</>}
       </div>
+
+      {/* FAQ */}
+      <div className="">
+        {/* Top BUYERS Line*/}
+        <div className="flex flex-row items-center w-full mt-40">
+          <div className="flex-grow h-2 border border-blue-950 border-y-2 border-x-0"></div>
+          <div className="flex justify-center mx-4">
+            FAQ
+          </div>
+          <div className="flex-grow h-2 border border-blue-950 border-y-2 border-x-0"></div>
+        </div>
+
+        {/* FAQ Content */}
+        <div className="min-[700px]:px-10 max-[700px]:px-2 text-left">
+          {/* What is the Mrs Doge game */}
+          <div className="py-2 mt-10 mb-3 text-center border border-blue-950 border-y-2 border-x-0">
+            What is the Mrs Doge game
+          </div>
+
+          <p className="">Our raffle provide </p>
+
+          {/* What is the Mrs Doge game */}
+          <div className="py-2 mt-10 mb-3 text-center border border-blue-950 border-y-2 border-x-0">
+            How is Round timer is working in this game
+          </div>
+          <p className="">
+            Each round starts with a timer that counts down from 12 hours. Each round has a round pot, which is a percent of total value of the pot contract.
+          </p>
+
+          {/* What is the Mrs Doge game */}
+          <div className="py-2 mt-10 mb-3 text-center border border-blue-950 border-y-2 border-x-0">
+            Way to Win
+          </div>
+          <p className="">
+            1. Be a top three ticket holder (They win 20%, 10% and 5% of the round pot, respectively)
+          </p>
+          <p className="">
+            2. Be the last ticket buyer (They win 30% of the round pot)
+          </p>
+          <p className="">
+            3. Win the lottery for Huge/Large/Small holders. A huge holder has at least 5,000,000 tokens, large at least 500,000, and small at least 50,000. After each round, 2, 5, and 10 huge/large/small holders split 10% of the round pot for each holder type. (30% total of round pot goes to lotteries)
+          </p>
+
+          {/* What is the Mrs Doge game */}
+          <div className="py-2 mt-10 mb-3 text-center border border-blue-950 border-y-2 border-x-0">
+            How many times will be added when I buy a ticket
+          </div>
+
+          <p className=""></p>
+          <p className="">
+            Buying tickets will add more time to the clock (game setting, default 30 seconds per ticket)
+          </p>
+
+          {/* What is the Mrs Doge game */}
+          <div className="py-2 mt-10 mb-3 text-center border border-blue-950 border-y-2 border-x-0">
+            What benefit can I get if I own more tokens
+          </div>
+          <p className="">
+            Users get discounts on buying tickets and bonsues on winnings based on amount of tokens held. The more tokens you have, the bigger your discounts and bonuses are!
+          </p>
+        </div>
+      </div>
+
+
     </div>
     {/* TODO: modalVisible */}
     {modalVisible ?
       <div className="fixed w-screen h-screen bg-white bg-opacity-50">
-        <div className="flex flex-col w-2/3 p-6 mx-auto my-[50px] bg-blue-200 rounded-lg border border-blue-700">
+        <div className="flex flex-col w-2/3 p-6 mx-auto my-[50px] bg-blue-200 rounded-lg border border-blue-700 overflow-auto">
           <p className="text-[36px] font-bold text-black mb-4 text-center mt-2">
             Round Result - {result.totalPotPrice} BTC
           </p>
