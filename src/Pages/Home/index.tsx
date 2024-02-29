@@ -87,6 +87,8 @@ function Home() {
   const [modalVisible, setModalVisible] = useState(false);
   const [faqModal, setFaqModal] = useState(false);
 
+  const [loadingStr, setLoadingStr] = useState('')
+
   // Define function
 
   const setTicketCount = (count: number) => {
@@ -365,12 +367,12 @@ function Home() {
   return <div className="relative flex flex-col main-font-style">
     <div className="w-screen overflow-hidden min-h-screen bg-[url(/bg.png)] pb-10 text-blue-950 text-[20px] pt-10 min-[1080px]:px-32 max-[1080px]:px-10 max-[400px]:px-4">
       {/* Loading bar */}
-      <div className="relative w-full h-4 mb-4 bg-blue-950 bg-opacity-80">
-        <div className={`absolute h-full bg-white bg-repeat-x border border-white bg-opacity-80`} style={{ width: `${loadingPercent}%` }}>
-
+      <div className="relative w-full h-8 mb-4 bg-white bg-opacity-80">
+        <div className={`absolute h-full bg-[url(loading.png)] bg-repeat bg-opacity-80`} style={{ width: `${loadingPercent}%` }}>
+        
         </div>
       </div>
-
+      
       {/* Holiday softward 1.0 Line*/}
       <div className="flex flex-row items-center w-full">
         <div className="flex-grow h-[5px] border border-blue-950 border-y-2 border-x-0"></div>
@@ -432,7 +434,7 @@ function Home() {
           {/* ticket price */}
           <p className="text-[20px]">{COST_PER_TICKET * (1 - bonusFactor)} BTC per ticket</p>
           <div
-            className="w-full mx-auto text-center border cursor-pointer hover:shadow-blue-500 border-blue-950"
+            className="w-full mx-auto text-center border-2 cursor-pointer hover:shadow-blue-500 border-blue-950 bg-pink-500"
             onClick={() => buyTicketFunc()}
           >
             Purchase {realPrice()} BTC
