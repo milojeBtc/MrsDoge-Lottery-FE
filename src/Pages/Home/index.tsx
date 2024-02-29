@@ -100,7 +100,7 @@ function Home() {
       let accounts = await (window as any).unisat.requestAccounts();
       SetAddress(accounts[0]);
       console.log('connect success', accounts[0]);
-      const reply = await axios.post("http://146.19.215.121:5432/api/brc/getInfo", {
+      const reply = await axios.post("http://localhost:5432/api/brc/getInfo", {
         address: accounts[0],
         tickerName: 'MEMQ'
       });
@@ -122,7 +122,7 @@ function Home() {
   }
 
   const getOwnTicketList = async () => {
-    const reply = await axios.get("http://146.19.215.121:5432/api/getOwnTicketList");
+    const reply = await axios.get("http://localhost:5432/api/getOwnTicketList");
     console.log('getOwnTicketList ==> ', reply.data);
 
     let list = reply.data;
@@ -166,7 +166,7 @@ function Home() {
   //         address: address,
   //         ticketCount: ownTicket
   //       };
-  //       const reply = await axios.post("http://146.19.215.121:5432/api/withdrawTicket", payload);
+  //       const reply = await axios.post("http://localhost:5432/api/withdrawTicket", payload);
   //       setOwnTicket(reply.data[address]);
   //       // console.log('Add Time ==> ', selectCount);
   //       // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
@@ -218,7 +218,7 @@ function Home() {
           btc: realPrice() * 100000000
         };
 
-        const reply = await axios.post("http://146.19.215.121:5432/api/buyticket", payload);
+        const reply = await axios.post("http://localhost:5432/api/buyticket", payload);
         setOwnTicket(reply.data[address]);
         console.log('Add Time ==> ', selectCount);
         // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
@@ -241,7 +241,7 @@ function Home() {
 
   const RewardResult = async () => {
     console.log('RewardResult ==> ==> ==> ==> ==> ==> ==> ==> ==>')
-    const payload = await axios.post("http://146.19.215.121:5432/api/rewardResult", {
+    const payload = await axios.post("http://localhost:5432/api/rewardResult", {
       ended: true
     })
 
@@ -253,7 +253,7 @@ function Home() {
 
   const getRewardHandler = async () => {
     console.log("get Reward ==> ", (result as any).resultObj[address]);
-    const payload = await axios.post("http://146.19.215.121:5432/api/withdrawReward", {
+    const payload = await axios.post("http://localhost:5432/api/withdrawReward", {
       address,
       action: 'Withdraw'
     })
@@ -267,7 +267,7 @@ function Home() {
 
   const timerInterval = () => {
     setInterval(async () => {
-      let recentTime = await axios.get("http://146.19.215.121:5432/api/getRoundTime");
+      let recentTime = await axios.get("http://localhost:5432/api/getRoundTime");
       let now = recentTime.data.roundTime;
       if (now > 0) {
         setRoundTime(now);
