@@ -106,7 +106,7 @@ function Home() {
       });
       setTokenBalance(reply.data.data.overallBalance);
       console.log('reply ==> ', reply.data.data.overallBalance);
-      toast.success("wallet connected successfully!!")
+      // toast.success("wallet connected successfully!!")
     } catch (e) {
       console.log('connect failed');
     }
@@ -356,7 +356,7 @@ function Home() {
   }, [totalTicket])
 
   return <div className="relative flex flex-col main-font-style">
-    <div className="w-screen overflow-hidden min-h-screen bg-[url(/bg.png)] pb-10 text-blue-950 text-[18px] pt-10 min-[1080px]:px-32 max-[1080px]:px-10 max-[400px]:px-4">
+    <div className="w-screen overflow-hidden min-h-screen bg-[url(/bg.png)] pb-10 text-blue-950 text-[20px] pt-10 min-[1080px]:px-32 max-[1080px]:px-10 max-[400px]:px-4">
       {/* Loading bar */}
       <div className="relative w-full h-4 mb-4 bg-blue-950 bg-opacity-80">
         <div className={`absolute h-full bg-white bg-repeat-x border border-white bg-opacity-80`}style={{width:`${loadingPercent}%`}}>
@@ -412,7 +412,7 @@ function Home() {
             >
               <span>&lt;</span>
             </div>
-            <div className="text-[24px] flex flex-row items-center gap-2 text-blue-950">
+            <div className="text-[20px] flex flex-row items-center gap-2 text-blue-950">
               <span className="font-bold">{selectCount}</span><span> Ticket</span>
             </div>
             <div 
@@ -423,12 +423,12 @@ function Home() {
             </div>
           </div>
           {/* ticket price */}
-          <p className="text-[24px]">{COST_PER_TICKET * (1 - bonusFactor)} BTC per ticket</p>
+          <p className="text-[20px]">{COST_PER_TICKET * (1 - bonusFactor)} BTC per ticket</p>
           <div
-            className="w-2/3 hover:shadow-blue-500 text-center font-bold text-[24px] cursor-pointer border border-blue-950 mx-auto"
+            className="w-full mx-auto text-center border cursor-pointer hover:shadow-blue-500 border-blue-950"
             onClick={() => buyTicketFunc()}
           >
-            {realPrice()} BTC
+            Purchase {realPrice()} BTC
           </div>
         </div>
         {/* Right */}

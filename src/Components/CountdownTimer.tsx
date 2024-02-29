@@ -59,7 +59,7 @@ const CountdownTimer: React.FC<TimerProps> = ({ targetDate, additionalDate, setE
 
   return (
     <div>
-      <div className='text-white text-[24px]'>
+      <div className='text-white text-[20px]'>
         {timerComponents.length ? timerComponents : <span>Time's up!</span>}
       </div>
     </div>
