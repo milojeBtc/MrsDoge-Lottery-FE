@@ -9,7 +9,6 @@ import {
   PRIOR_BUYER_BENEFIT_ARR,
   COST_PER_TICKET,
   TREASURE_WALLET_ADDRESS,
-  WITHDRAW_FACTOR,
 } from "../../Constants";
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -48,11 +47,8 @@ function Home() {
 
   const [PotPrice, setPotPrice] = useState(0);
   const [realPotPrice, setRealPotPrice] = useState(0);
-  const [holderRarity, setHolderRarity] = useState('Common');
 
   const [end, setEnd] = useState(false);
-
-  const [rarityList, setRarityList] = useState(null);
 
   const [roundNumber, setRoundNumber] = useState(null);
   const [totalTicket, setTotalTicket] = useState(0);
@@ -85,9 +81,6 @@ function Home() {
   });
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [faqModal, setFaqModal] = useState(false);
-
-  const [loadingStr, setLoadingStr] = useState('')
 
   // Define function
 
@@ -148,51 +141,13 @@ function Home() {
     Object.keys(ownTicketList).map((value) => {
       calcRealPotAmount += (ownTicketList[value] * COST_PER_TICKET * (1 - bonusFactor));
     })
-    console.log('calcRealPot ==> ', calcRealPotAmount)
+    console.log('realPotPrice ==> ', realPotPrice)
     setRealPotPrice(calcRealPotAmount);
   }
 
   const realPrice = () => {
     console.log('realPrice ==> ', Math.floor(COST_PER_TICKET * (1 - bonusFactor) * selectCount * 100000000) / 100000000);
     return Math.floor(COST_PER_TICKET * (1 - bonusFactor) * selectCount * 100000000) / 100000000;
-  }
-
-  // const realWithdrawPrice = () => {
-  //   return Math.floor(COST_PER_TICKET * (1 - bonusFactor) * WITHDRAW_FACTOR * ownTicket * 100000000) / 100000000;
-  // }
-
-  // const withdrawTicketFunc = async () => {
-  //   try {
-  //     if (address != '') {
-
-  //       const payload = {
-  //         address: address,
-  //         ticketCount: ownTicket
-  //       };
-  //       const reply = await axios.post("http://146.19.215.121:5432/api/withdrawTicket", payload);
-  //       setOwnTicket(reply.data[address]);
-  //       // console.log('Add Time ==> ', selectCount);
-  //       // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
-
-  //       await getOwnTicketList();
-
-  //       await calcRealPot()
-
-  //       toast.success("Withdrawing Ticket successfully!")
-
-  //       console.log('reply => ', reply);
-  //     } else {
-  //       window.open("https://chromewebstore.google.com/detail/unisat-wallet/ppbibelpcjmhbdihakflkdcoccbgbkpo");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Buying Ticket get error!")
-  //     console.log(error)
-  //   }
-  // }
-
-  const giveReward = async () => {
-    console.log('Total Pot Price ==>', realPotPrice);
-    console.log('')
   }
 
   const rarityStaticFunc = () => {
@@ -440,7 +395,7 @@ function Home() {
           {/* ticket price */}
           <p className="text-[20px]">{COST_PER_TICKET * (1 - bonusFactor)} BTC per ticket</p>
           <div
-            className="w-full mx-auto text-center border-2 cursor-pointer hover:shadow-blue-500 border-blue-950 bg-pink-500"
+            className="w-full mx-auto text-center bg-pink-500 border-2 cursor-pointer hover:shadow-blue-500 border-blue-950"
             onClick={() => buyTicketFunc()}
           >
             Purchase {realPrice()} BTC
