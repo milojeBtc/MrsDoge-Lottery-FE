@@ -1,6 +1,6 @@
 # 📦 Mrs Doge Lottery FE
 
-[img]https://i.ibb.co/k63Gwfb/mrsDoge.png[/img]
+<img src="https://i.ibb.co/k63Gwfb/mrsDoge.png" alt="mrsDoge" border="0" />
 
 ![Blockchain](https://img.shields.io/badge/Blockchain-121D33?style=flat-square&logo=blockchain.com&logoColor=white)
 ![Bitcoin](https://img.shields.io/badge/Bitcoin-F7931A?style=flat-square&logo=bitcoin&logoColor=white)
