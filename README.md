@@ -12,7 +12,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)
 ![React.js](https://img.shields.io/badge/React.js-0081CB?style=flat-square&logo=react&logoColor=61DAFB)
 
-<img src="https://i.ibb.co/k63Gwfb/mrsDoge.png" alt="mrsDoge" border="0">
+<img src="https://i.ibb.co/k63Gwfb/mrsDoge.png" alt="mrsDoge" border="0" />
 
 ## 🌟 Highlights
 
