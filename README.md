@@ -1,10 +1,18 @@
 # 📦 Mrs Doge Lottery FE
 
+<h1 align="center">
+  <a href="https://git.io/typing-svg">
+    <img src="https://readme-typing-svg.herokuapp.com/?lines=Hello,+There!+👋;This+is+Miloje+Nikolic.;Nice+to+meet+you!&center=true&size=30">
+  </a>
+</h1>
+
 ![Blockchain](https://img.shields.io/badge/Blockchain-121D33?style=flat-square&logo=blockchain.com&logoColor=white)
 ![Bitcoin](https://img.shields.io/badge/Bitcoin-F7931A?style=flat-square&logo=bitcoin&logoColor=white)
 ![Web3](https://img.shields.io/badge/Web3-E2761B?style=flat-square&logo=web3&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)
 ![React.js](https://img.shields.io/badge/React.js-0081CB?style=flat-square&logo=react&logoColor=61DAFB)
+
+<img src="https://i.ibb.co/k63Gwfb/mrsDoge.png" alt="mrsDoge" border="0">
 
 ## 🌟 Highlights
 
