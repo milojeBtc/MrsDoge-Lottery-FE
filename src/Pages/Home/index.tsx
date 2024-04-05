@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 import axios from 'axios'
-// import CountdownTimer from "../../Components/CountdownTimer";
 
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -55,9 +54,6 @@ function Home() {
 
   const [loadingPercent, setLoadingPercent] = useState(0);
 
-  // useRef
-  // const withdrawInput = useRef(null);
-
   // wallet
   const [address, SetAddress] = useState('');
   const [tokenBalance, setTokenBalance] = useState(0);
@@ -102,7 +98,6 @@ function Home() {
       });
       setTokenBalance(reply.data.data.overallBalance);
       console.log('reply ==> ', reply.data.data.overallBalance);
-      // toast.success("wallet connected successfully!!")
     } catch (e) {
       console.log('connect failed');
     }
@@ -130,9 +125,7 @@ function Home() {
     setOwnTicketList(sorted);
 
     console.log('address ===>', address)
-
-    // toast.success("loading data is successfully!")
-
+    
     if (address != '') setOwnTicket(reply.data[address]);
   }
 
@@ -167,7 +160,6 @@ function Home() {
     try {
       if (address != '') {
 
-        // TODO
         await (window as any).unisat.sendBitcoin(TREASURE_WALLET_ADDRESS, realPrice() * 100000000)
         const payload = {
           address: address,
@@ -179,52 +171,38 @@ function Home() {
         const reply = await axios.post("http://146.19.215.121:5432/api/buyticket", payload);
         setOwnTicket(reply.data[address]);
         console.log('Add Time ==> ', selectCount);
-        // setAdditionalDate(flag => flag + 30 * selectCount * 1000);
 
         toast.info("Purchased ticket, Order is processing")
 
         await delay(2000);
-
         await getOwnTicketList();
-
         await calcRealPot()
 
         toast.success("Buying Ticket successfully!")
-
-        console.log('reply => ', reply);
       } else {
         window.open("https://chromewebstore.google.com/detail/unisat-wallet/ppbibelpcjmhbdihakflkdcoccbgbkpo");
       }
     } catch (error) {
       toast.error("Please connect wallet first!")
-      console.log(error)
     }
   }
 
   const RewardResult = async () => {
-    console.log('RewardResult ==> ==> ==> ==> ==> ==> ==> ==> ==>')
     const payload = await axios.post("http://146.19.215.121:5432/api/rewardResult", {
       ended: true
     })
 
     setResult(payload.data);
-
-    console.log('Round Result ==> ', payload.data);
-    console.log('Round address owner ==> ', payload.data.resultObj[address])
   }
 
   const getRewardHandler = async () => {
     try {
-      console.log("get Reward ==> ", (result as any).resultObj[address]);
       const payload = await axios.post("http://146.19.215.121:5432/api/withdrawReward", {
         address,
         action: 'Withdraw'
       })
 
       const temp = payload.data;
-
-      console.log('Updated result ==> ', temp);
-
       toast.success('Getting Reward successfully!');
 
       setResult(temp);
@@ -239,14 +217,10 @@ function Home() {
       let now = recentTime.data.roundTime;
       if (now > 0) {
         setRoundTime(now);
-        console.log('recent time ==> ', now);
       } else {
-        console.log("===================================")
         setEnd(true);
         setModalVisible(true);
         let totalResult = recentTime.data.TotalResult;
-        console.log('TotalResult ==> ', totalResult);
-        // setResult(totalResult);
       }
 
       // Get Own List
@@ -282,8 +256,6 @@ function Home() {
       </div>
     )
   }
-
-  // Real time
 
   // Define Hook
   useEffect(() => {
