@@ -46,11 +46,15 @@ This is my website: https://miloje-btc.vercel.app/
 For installation, you should install the node before this.
 
 ```bash
-npm install or yarn
+npm install 
+```
+or
+```
+yarn
 ```
 
 ## 💭 Feedback and Contributing
 
-Is anyone willing to build more valuable and exciting project, plz contact.
+🙏 Is anyone willing to build more valuable and exciting project, plz contact.
 
-Let's build it together!!
+⛏ Let's build it together!! ⛏
